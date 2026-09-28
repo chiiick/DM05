@@ -5,7 +5,8 @@ from pathlib import Path
 
 import numpy as np
 
-from forecast import alert_scores, idle_mask, make_features, read_data, threshold_for_recall
+from forecast import (alert_scores, conformal_radius, idle_mask, make_features,
+                      read_data, threshold_for_recall)
 
 
 DATA = Path(__file__).resolve().parents[1] / "okm_augumented_2021.csv"
@@ -52,6 +53,10 @@ class FeatureTimingTest(unittest.TestCase):
         observed = np.array([False, True, True, False])
         self.assertEqual(threshold_for_recall(score, observed, 1.0), 0.4)
         self.assertEqual(threshold_for_recall(score, observed, 0.5), 0.6)
+
+    def test_interval_quantile_uses_finite_sample_rank(self):
+        self.assertEqual(conformal_radius(np.arange(1, 10), coverage=0.8), 8.0)
+        self.assertTrue(np.isinf(conformal_radius(np.array([1.0]), coverage=0.9)))
 
 
 if __name__ == "__main__":

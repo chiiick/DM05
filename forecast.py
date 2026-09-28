@@ -1,7 +1,7 @@
 """One-hour-ahead electricity forecast with strictly historical inputs.
 
-Select a ridge and histogram gradient boosting model with expanding-window
-validation, then fit through July and evaluate August-September once.
+Select models and operating rules with expanding-window validation. Evaluate
+August with a July-end fit, then simulate a September refit using August data.
 
 Run from this directory:
     python3 forecast.py --data okm_augumented_2021.csv
@@ -329,6 +329,15 @@ def stage_four_validation(frame: pd.DataFrame, quarter_target: pd.Series,
                                               risk_score, quarter_cutoff, threshold)}
 
 
+def conformal_radius(absolute_errors: np.ndarray, coverage: float = 0.90) -> float:
+    """Finite-sample absolute-residual quantile for a symmetric prediction band."""
+    if not 0 < coverage < 1 or len(absolute_errors) == 0:
+        raise ValueError("Coverage must be in (0, 1) and calibration errors nonempty")
+    ordered = np.sort(np.asarray(absolute_errors, dtype=float))
+    rank = int(np.ceil((len(ordered) + 1) * coverage))
+    return float(ordered[rank - 1]) if rank <= len(ordered) else float("inf")
+
+
 def alert_scores(actual: np.ndarray, estimate: np.ndarray, peak_cutoff: float,
                  alert_threshold: float) -> dict:
     observed = actual >= peak_cutoff
@@ -396,7 +405,7 @@ def save_plot(predictions: pd.DataFrame, output: Path) -> None:
     first_week = predictions.iloc[:168]
     fig, ax = plt.subplots(figsize=(12, 4))
     ax.plot(first_week.index, first_week["actual"], label="Actual", linewidth=1)
-    ax.plot(first_week.index, first_week["idle_gated"], label="Idle-gated 1h ahead", linewidth=1)
+    ax.plot(first_week.index, first_week["operational"], label="Operational 1h ahead", linewidth=1)
     ax.set(title="First test week: one-hour-ahead electricity demand", ylabel="Hourly mean demand")
     ax.legend()
     fig.autofmt_xdate()
@@ -454,12 +463,45 @@ def run(data_path: Path, output: Path) -> None:
     alert_threshold = stage_two["quarter_peak_alert_threshold"]
     classifier_threshold = stage_four["alert_threshold"]
 
+    # A model deployed on 1 August can be updated on 1 September using all
+    # outcomes observed during August. The gate remains fixed from validation.
+    operational_prediction = idle_gated_prediction.copy()
+    september = test.index >= "2021-09-01"
+    september_train = frame.loc[frame.index < "2021-09-01"]
+    september_test = test.loc[september]
+    september_ensemble = np.mean([
+        np.maximum(0, make_hgb(leaf).fit(
+            september_train[feature_names], september_train.target).predict(
+                september_test[feature_names]))
+        for leaf in (20, 50)], axis=0)
+    september_gate = idle_mask(clean, september_test, gate_choice["hours"],
+                                gate_choice["power_cap"])
+    operational_prediction[september] = np.where(
+        september_gate, september_test.power_lag_1.to_numpy(), september_ensemble)
+
+    july_oof = oof.loc[oof.index >= "2021-07-01"]
+    july_frame = development.loc[july_oof.index]
+    july_gate = idle_mask(clean, july_frame, gate_choice["hours"],
+                           gate_choice["power_cap"])
+    july_prediction = np.where(july_gate, july_frame.power_lag_1.to_numpy(),
+                                july_oof.predicted_mean.to_numpy())
+    july_radius = conformal_radius(np.abs(july_prediction - july_oof.actual_mean.to_numpy()))
+    august_radius = conformal_radius(np.abs(operational_prediction[~september] - y_test[~september]))
+    interval_radius = np.where(september, august_radius, july_radius)
+    interval_lower = np.maximum(0, operational_prediction - interval_radius)
+    interval_upper = operational_prediction + interval_radius
+    within_interval = (y_test >= interval_lower) & (y_test <= interval_upper)
+
     predictions = pd.DataFrame({"actual": y_test, "persistence": test["power_lag_1"].to_numpy(),
                                 "weekly": test["power_lag_168"].to_numpy(),
                                 "ridge": ridge_prediction, "hgb": hgb_prediction,
                                 "ensemble": ensemble_prediction,
                                 "idle_gated": idle_gated_prediction,
                                 "idle_gate_applied": gate,
+                                "operational": operational_prediction,
+                                "model_refit_date": np.where(september, "2021-09-01", "2021-08-01"),
+                                "interval_lower_90": interval_lower,
+                                "interval_upper_90": interval_upper,
                                 "quarter_actual": quarter_actual,
                                 "quarter_prediction": quarter_prediction,
                                 "quarter_peak_alert": quarter_prediction >= alert_threshold,
@@ -487,11 +529,29 @@ def run(data_path: Path, output: Path) -> None:
         "stage_two_validation": stage_two,
         "stage_three_validation": stage_three,
         "stage_four_validation": stage_four,
+        "stage_five_operational": {
+            "schedule": "Fit through July for August; refit through August for September.",
+            "interval_method": "90% symmetric absolute-residual quantile, calibrated on the preceding month",
+            "calibration": {"2021-08": {"month": "2021-07", "n": int(len(july_oof)),
+                                         "radius": july_radius},
+                            "2021-09": {"month": "2021-08", "n": int((~september).sum()),
+                                         "radius": august_radius}},
+            "monthly_results": {
+                month: {"n": int(np.sum(mask)),
+                        "static_gated_mae": float(np.mean(np.abs(
+                            idle_gated_prediction[mask] - y_test[mask]))),
+                        "operational_mae": float(np.mean(np.abs(
+                            operational_prediction[mask] - y_test[mask]))),
+                        "empirical_interval_coverage": float(np.mean(within_interval[mask]))}
+                for month, mask in (("2021-08", ~september), ("2021-09", september))},
+            "overall_interval_coverage": float(np.mean(within_interval)),
+        },
         "chosen_ridge_alpha": chosen_alpha,
         "chosen_hgb_min_samples_leaf": chosen_leaf,
         "final_fit_rows": len(development),
         "test_metrics": {name: scores(y_test, predictions[name].to_numpy(), peak_cutoff)
-                         for name in ("persistence", "weekly", "ridge", "hgb", "ensemble", "idle_gated")},
+                         for name in ("persistence", "weekly", "ridge", "hgb", "ensemble",
+                                      "idle_gated", "operational")},
         "quarter_max_test_metrics": scores(quarter_actual, quarter_prediction,
                                             quarter_peak_cutoff),
         "quarter_peak_alert_test": alert_scores(quarter_actual, quarter_prediction,
@@ -502,7 +562,7 @@ def run(data_path: Path, output: Path) -> None:
             quarter_actual >= quarter_peak_cutoff, peak_risk_score)),
         "ensemble_error_conditions": error_conditions(test, ensemble_prediction, peak_cutoff),
         "idle_gated_error_conditions": error_conditions(test, idle_gated_prediction, peak_cutoff),
-        "observed_test_conditions": condition_analysis(clean, test, idle_gated_prediction,
+        "observed_test_conditions": condition_analysis(clean, test, operational_prediction,
                                                          peak_cutoff, quarter_peak_cutoff),
         "ridge_coefficients_standardized": {name: float(value) for name, value in
                                              zip(feature_names, model["coefficients"])},
@@ -515,6 +575,7 @@ def run(data_path: Path, output: Path) -> None:
                       "stage_two_validation": stage_two,
                       "stage_three_selected_gate": stage_three["selected"],
                       "stage_four_validation": stage_four,
+                      "stage_five_operational": report["stage_five_operational"],
                       "test_metrics": report["test_metrics"],
                       "quarter_peak_alert_test": report["quarter_peak_alert_test"],
                       "quarter_peak_classifier_test": report["quarter_peak_classifier_test"]},

@@ -393,6 +393,37 @@
       "f2": 0.8045977011494253
     }
   },
+  "stage_five_operational": {
+    "schedule": "Fit through July for August; refit through August for September.",
+    "interval_method": "90% symmetric absolute-residual quantile, calibrated on the preceding month",
+    "calibration": {
+      "2021-08": {
+        "month": "2021-07",
+        "n": 572,
+        "radius": 15.008433655392537
+      },
+      "2021-09": {
+        "month": "2021-08",
+        "n": 744,
+        "radius": 14.04349023499013
+      }
+    },
+    "monthly_results": {
+      "2021-08": {
+        "n": 744,
+        "static_gated_mae": 5.181042488845707,
+        "operational_mae": 5.181042488845707,
+        "empirical_interval_coverage": 0.9206989247311828
+      },
+      "2021-09": {
+        "n": 336,
+        "static_gated_mae": 5.08940180472574,
+        "operational_mae": 4.814238431776446,
+        "empirical_interval_coverage": 0.9404761904761905
+      }
+    },
+    "overall_interval_coverage": 0.9268518518518518
+  },
   "chosen_ridge_alpha": 10.0,
   "chosen_hgb_min_samples_leaf": 20,
   "final_fit_rows": 4747,
@@ -462,6 +493,17 @@
       "peak_fn": 44,
       "peak_precision": 0.6017699115044248,
       "peak_recall": 0.6071428571428571
+    },
+    "operational": {
+      "n": 1080,
+      "mae": 5.066925671090825,
+      "rmse": 8.879380193854923,
+      "wape": 0.05772325188053091,
+      "peak_tp": 65,
+      "peak_fp": 34,
+      "peak_fn": 47,
+      "peak_precision": 0.6565656565656566,
+      "peak_recall": 0.5803571428571429
     }
   },
   "quarter_max_test_metrics": {
@@ -582,28 +624,28 @@
       "idle": {
         "n": 435,
         "actual_mean": 22.46206896551724,
-        "mae": 1.6931974396012617,
+        "mae": 1.643609812724977,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.0
       },
       "running": {
         "n": 588,
         "actual_mean": 135.39965986394557,
-        "mae": 7.214260684712057,
+        "mae": 7.116521338151836,
         "mean_peak_rate": 0.18877551020408162,
         "quarter_peak_rate": 0.20578231292517007
       },
       "start": {
         "n": 29,
         "actual_mean": 112.17241379310344,
-        "mae": 12.139841768061546,
+        "mae": 11.977555956012358,
         "mean_peak_rate": 0.034482758620689655,
         "quarter_peak_rate": 0.06896551724137931
       },
       "stop": {
         "n": 28,
         "actual_mean": 77.25,
-        "mae": 8.36260849921538,
+        "mae": 8.051635238753175,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.0
       }
@@ -612,168 +654,168 @@
       "0": {
         "n": 45,
         "actual_mean": 49.53333333333333,
-        "mae": 3.408722617700501,
+        "mae": 3.3783411742149156,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.0
       },
       "1": {
         "n": 45,
         "actual_mean": 68.26666666666667,
-        "mae": 3.135146096561155,
+        "mae": 3.188880469993718,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.0
       },
       "2": {
         "n": 45,
         "actual_mean": 71.35555555555555,
-        "mae": 2.701152450554691,
+        "mae": 2.7330229294190933,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.0
       },
       "3": {
         "n": 45,
         "actual_mean": 67.84444444444445,
-        "mae": 2.8306592043712886,
+        "mae": 2.889626236374987,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.0
       },
       "4": {
         "n": 45,
         "actual_mean": 69.88888888888889,
-        "mae": 3.1998725059825177,
+        "mae": 3.3107241605296838,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.0
       },
       "5": {
         "n": 45,
         "actual_mean": 60.577777777777776,
-        "mae": 2.6669403821297144,
+        "mae": 2.553700845489047,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.0
       },
       "6": {
         "n": 45,
         "actual_mean": 70.53333333333333,
-        "mae": 3.5041989586435287,
+        "mae": 3.564339290480659,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.0
       },
       "7": {
         "n": 45,
         "actual_mean": 81.75555555555556,
-        "mae": 10.282903060618061,
+        "mae": 9.99954666985526,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.0
       },
       "8": {
         "n": 45,
         "actual_mean": 115.08888888888889,
-        "mae": 8.427765913272646,
+        "mae": 7.84708692288812,
         "mean_peak_rate": 0.35555555555555557,
         "quarter_peak_rate": 0.4
       },
       "9": {
         "n": 45,
         "actual_mean": 114.28888888888889,
-        "mae": 6.329645802012196,
+        "mae": 6.188686600604629,
         "mean_peak_rate": 0.3333333333333333,
         "quarter_peak_rate": 0.35555555555555557
       },
       "10": {
         "n": 45,
         "actual_mean": 110.13333333333334,
-        "mae": 7.269683701685425,
+        "mae": 7.006444397451258,
         "mean_peak_rate": 0.24444444444444444,
         "quarter_peak_rate": 0.3111111111111111
       },
       "11": {
         "n": 45,
         "actual_mean": 115.84444444444445,
-        "mae": 7.02723429857667,
+        "mae": 6.7641902676781696,
         "mean_peak_rate": 0.4666666666666667,
         "quarter_peak_rate": 0.4444444444444444
       },
       "12": {
         "n": 45,
         "actual_mean": 74.91111111111111,
-        "mae": 5.338899483070762,
+        "mae": 5.294902321588354,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.0
       },
       "13": {
         "n": 45,
         "actual_mean": 113.33333333333333,
-        "mae": 8.361936074138198,
+        "mae": 8.336851418305567,
         "mean_peak_rate": 0.35555555555555557,
         "quarter_peak_rate": 0.28888888888888886
       },
       "14": {
         "n": 45,
         "actual_mean": 114.91111111111111,
-        "mae": 5.915255964586759,
+        "mae": 5.669350091152009,
         "mean_peak_rate": 0.4,
         "quarter_peak_rate": 0.37777777777777777
       },
       "15": {
         "n": 45,
         "actual_mean": 108.13333333333334,
-        "mae": 6.199883147350692,
+        "mae": 6.44566308088934,
         "mean_peak_rate": 0.1111111111111111,
         "quarter_peak_rate": 0.26666666666666666
       },
       "16": {
         "n": 45,
         "actual_mean": 109.5111111111111,
-        "mae": 7.219121535268616,
+        "mae": 6.928477771004231,
         "mean_peak_rate": 0.17777777777777778,
         "quarter_peak_rate": 0.2
       },
       "17": {
         "n": 45,
         "actual_mean": 90.28888888888889,
-        "mae": 5.84106585722398,
+        "mae": 5.772429529770223,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.044444444444444446
       },
       "18": {
         "n": 45,
         "actual_mean": 101.15555555555555,
-        "mae": 5.7031384667308735,
+        "mae": 5.730809877997199,
         "mean_peak_rate": 0.044444444444444446,
         "quarter_peak_rate": 0.022222222222222223
       },
       "19": {
         "n": 45,
         "actual_mean": 93.24444444444444,
-        "mae": 5.247488512852742,
+        "mae": 5.068946263581282,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.022222222222222223
       },
       "20": {
         "n": 45,
         "actual_mean": 80.71111111111111,
-        "mae": 3.8490941934044693,
+        "mae": 3.5619464010945876,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.0
       },
       "21": {
         "n": 45,
         "actual_mean": 80.53333333333333,
-        "mae": 3.3286345459489364,
+        "mae": 3.4586018570334747,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.0
       },
       "22": {
         "n": 45,
         "actual_mean": 74.31111111111112,
-        "mae": 2.6687069592324484,
+        "mae": 2.8178795319652647,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.0
       },
       "23": {
         "n": 45,
         "actual_mean": 70.55555555555556,
-        "mae": 3.2036195589509955,
+        "mae": 3.09576799681874,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.0
       }
@@ -782,14 +824,14 @@
       "weekday": {
         "n": 768,
         "actual_mean": 111.078125,
-        "mae": 6.272220688476118,
+        "mae": 6.188527158354599,
         "mean_peak_rate": 0.14583333333333334,
         "quarter_peak_rate": 0.16015625
       },
       "weekend": {
         "n": 312,
         "actual_mean": 30.42948717948718,
-        "mae": 2.3963754145493446,
+        "mae": 2.306060471672305,
         "mean_peak_rate": 0.0,
         "quarter_peak_rate": 0.0
       }
@@ -805,7 +847,7 @@
       "2021-09": {
         "n": 336,
         "actual_mean": 102.29464285714286,
-        "mae": 5.08940180472574,
+        "mae": 4.814238431776446,
         "mean_peak_rate": 0.10714285714285714,
         "quarter_peak_rate": 0.11011904761904762
       }
@@ -814,8 +856,8 @@
       {
         "timestamp": "2021-09-08 12:00:00",
         "actual": 25.0,
-        "prediction": 101.78570424793203,
-        "absolute_error": 76.78570424793203,
+        "prediction": 100.21591745537114,
+        "absolute_error": 75.21591745537114,
         "production_state": "running"
       },
       {
