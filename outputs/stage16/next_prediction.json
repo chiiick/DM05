@@ -1,0 +1,9 @@
+{
+  "forecast_hour": "2021-09-15 00:00:00",
+  "train_end": "2021-09-14 23:00:00",
+  "candidate": "baseline",
+  "predicted_mean": 73.87083333333334,
+  "active_score": 0.8412940066286215,
+  "artifact_sha256": "a9d67791cdbd97274ecc4b6c6db395fd87939e52ebb6a7f3c5d3a1a748a39026",
+  "note": "Mean-only extension; stage 15 peak policy is unchanged."
+}

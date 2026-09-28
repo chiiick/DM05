@@ -1,0 +1,135 @@
+{
+  "selection_scores": {
+    "baseline": {
+      "mean_month_mae": 4.342834965734104,
+      "transition_month_mae": 6.147171564460636,
+      "eligible": true
+    },
+    "ungated": {
+      "mean_month_mae": 5.130412676929843,
+      "transition_month_mae": 6.055019481127303,
+      "eligible": false
+    },
+    "protect_025": {
+      "mean_month_mae": 4.342834965734104,
+      "transition_month_mae": 6.147171564460636,
+      "eligible": true
+    },
+    "protect_050": {
+      "mean_month_mae": 4.342834965734104,
+      "transition_month_mae": 6.147171564460636,
+      "eligible": true
+    },
+    "soft_gate": {
+      "mean_month_mae": 4.335238590101959,
+      "transition_month_mae": 6.136653660037328,
+      "eligible": true
+    },
+    "state_mixture": {
+      "mean_month_mae": 5.334608507785783,
+      "transition_month_mae": 5.915892093419124,
+      "eligible": false
+    }
+  },
+  "selected_candidate": "soft_gate",
+  "july_acceptance": false,
+  "adopted": "baseline",
+  "july": {
+    "baseline": {
+      "mae": 5.6510307400932405,
+      "transition_mae": 6.615505050505052
+    },
+    "ungated": {
+      "mae": 5.403891681235431,
+      "transition_mae": 6.615505050505052
+    },
+    "protect_025": {
+      "mae": 5.6510307400932405,
+      "transition_mae": 6.615505050505052
+    },
+    "protect_050": {
+      "mae": 5.6510307400932405,
+      "transition_mae": 6.615505050505052
+    },
+    "soft_gate": {
+      "mae": 5.639710526805455,
+      "transition_mae": 6.615505050505052
+    },
+    "state_mixture": {
+      "mae": 5.395799263604053,
+      "transition_mae": 6.385780221456753
+    }
+  },
+  "input_sha256": "404b9150f8ee4fb47e807fbc1aacdf9fddff5c3297d7802449e247981fcc7d75",
+  "features": [
+    "power_lag_1",
+    "power_lag_2",
+    "power_lag_3",
+    "power_lag_23",
+    "power_lag_24",
+    "power_lag_25",
+    "power_lag_48",
+    "power_lag_167",
+    "power_lag_168",
+    "power_lag_169",
+    "production_lag_1",
+    "production_lag_2",
+    "production_lag_3",
+    "production_lag_24",
+    "production_lag_25",
+    "previous_hour_final_quarter",
+    "power_past_6h_mean",
+    "power_past_24h_mean",
+    "power_past_6h_std",
+    "power_recent_change",
+    "production_recent_change",
+    "previous_hour_active",
+    "past_6h_active_share",
+    "hour_sin",
+    "hour_cos",
+    "weekday_sin",
+    "weekday_cos",
+    "month_sin",
+    "month_cos",
+    "weekend",
+    "hour",
+    "weekday",
+    "day_of_year",
+    "weekday_work_start",
+    "previous_15\ubd84",
+    "previous_30\ubd84",
+    "previous_45\ubd84",
+    "previous_quarter_ramp",
+    "previous_last_quarter_ramp",
+    "previous_quarter_range",
+    "previous_quarter_max",
+    "day_ago_quarter_max",
+    "past_6_active_share",
+    "past_6_production_logmean",
+    "past_12_active_share",
+    "past_12_production_logmean",
+    "past_24_active_share",
+    "past_24_production_logmean",
+    "past_48_active_share",
+    "past_48_production_logmean",
+    "past_24_power_min",
+    "past_24_power_max",
+    "past_48_power_mean",
+    "power_relative_to_day_mean",
+    "preceding_idle_hours"
+  ],
+  "selection_months": [
+    "2021-04",
+    "2021-05",
+    "2021-06"
+  ],
+  "acceptance_month": "2021-07",
+  "candidate_names": [
+    "baseline",
+    "ungated",
+    "protect_025",
+    "protect_050",
+    "soft_gate",
+    "state_mixture"
+  ]
+}
