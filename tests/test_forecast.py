@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 
-from forecast import alert_scores, idle_mask, make_features, read_data
+from forecast import alert_scores, idle_mask, make_features, read_data, threshold_for_recall
 
 
 DATA = Path(__file__).resolve().parents[1] / "okm_augumented_2021.csv"
@@ -46,6 +46,12 @@ class FeatureTimingTest(unittest.TestCase):
         changed.loc[stamp, "생산량"] = 99999
         altered = idle_mask(changed, row, 6, 25)
         np.testing.assert_array_equal(original, altered)
+
+    def test_recall_threshold_uses_highest_eligible_score(self):
+        score = np.array([0.1, 0.4, 0.6, 0.9])
+        observed = np.array([False, True, True, False])
+        self.assertEqual(threshold_for_recall(score, observed, 1.0), 0.4)
+        self.assertEqual(threshold_for_recall(score, observed, 0.5), 0.6)
 
 
 if __name__ == "__main__":

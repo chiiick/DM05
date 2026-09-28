@@ -375,6 +375,24 @@
       "mean_fold_mae": 5.486983869593906
     }
   },
+  "stage_four_validation": {
+    "selection_rule": "highest score threshold with at least 85% recall on April-July validation",
+    "risk_score_note": "Class-balanced classifier scores are ranking scores, not calibrated probabilities.",
+    "minimum_validation_recall": 0.85,
+    "alert_threshold": 0.36189282274441137,
+    "validation_average_precision": 0.7849008419799633,
+    "regression_validation_average_precision": 0.7097965275043445,
+    "validation_alert": {
+      "n": 2756,
+      "actual_peak_hours": 197,
+      "tp": 168,
+      "fp": 88,
+      "fn": 29,
+      "precision": 0.65625,
+      "recall": 0.8527918781725888,
+      "f2": 0.8045977011494253
+    }
+  },
   "chosen_ridge_alpha": 10.0,
   "chosen_hgb_min_samples_leaf": 20,
   "final_fit_rows": 4747,
@@ -467,6 +485,17 @@
     "recall": 0.8536585365853658,
     "f2": 0.747863247863248
   },
+  "quarter_peak_classifier_test": {
+    "n": 1080,
+    "actual_peak_hours": 123,
+    "tp": 116,
+    "fp": 126,
+    "fn": 7,
+    "precision": 0.4793388429752066,
+    "recall": 0.943089430894309,
+    "f2": 0.7901907356948229
+  },
+  "quarter_peak_classifier_test_average_precision": 0.6476674872226253,
   "ensemble_error_conditions": {
     "mae_by_hour": {
       "0": 5.383588390919406,

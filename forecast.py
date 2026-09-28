@@ -22,7 +22,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import sklearn
-from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.ensemble import HistGradientBoostingClassifier, HistGradientBoostingRegressor
+from sklearn.metrics import average_precision_score
 
 
 POWER_COLUMNS = ["15분", "30분", "45분", "60분"]
@@ -191,6 +192,13 @@ def make_hgb(min_samples_leaf: int) -> HistGradientBoostingRegressor:
                                          random_state=42)
 
 
+def make_peak_classifier(min_samples_leaf: int) -> HistGradientBoostingClassifier:
+    return HistGradientBoostingClassifier(max_iter=150, max_leaf_nodes=15,
+                                          min_samples_leaf=min_samples_leaf,
+                                          learning_rate=0.05, l2_regularization=10,
+                                          class_weight="balanced", random_state=42)
+
+
 def stage_two_validation(frame: pd.DataFrame, quarter_target: pd.Series,
                          feature_names: list[str], quarter_cutoff: float) -> tuple[dict, pd.DataFrame]:
     """Cross-validated blend and quarter-peak alarm; test data are not used."""
@@ -279,6 +287,46 @@ def select_idle_gate(oof: pd.DataFrame, clean: pd.DataFrame,
     selected = min(records, key=lambda row: row["mean_fold_mae"])
     return {"selection_metric": "equal-weighted mean of April-July monthly MAE",
             "candidates": records, "selected": selected}
+
+
+def threshold_for_recall(scores: np.ndarray, observed: np.ndarray,
+                         minimum_recall: float) -> float:
+    """Largest validation score cutoff satisfying a stated recall floor."""
+    if not 0 < minimum_recall <= 1 or not np.any(observed):
+        raise ValueError("Recall target must be in (0, 1] and validation must contain peaks")
+    options = [float(threshold) for threshold in np.unique(scores)
+               if np.mean(scores[observed] >= threshold) >= minimum_recall]
+    return max(options)
+
+
+def stage_four_validation(frame: pd.DataFrame, quarter_target: pd.Series,
+                          feature_names: list[str], quarter_cutoff: float,
+                          regression_oof: pd.DataFrame) -> dict:
+    """Validate a peak classifier with future-month, expanding-window folds."""
+    folds = [("2021-04-01", "2021-05-01"), ("2021-05-01", "2021-06-01"),
+             ("2021-06-01", "2021-07-01"), ("2021-07-01", "2021-08-01")]
+    parts = []
+    for start, end in folds:
+        train = frame.loc[frame.index < start]
+        valid = frame.loc[(frame.index >= start) & (frame.index < end)]
+        estimates = []
+        for leaf in (20, 50):
+            model = make_peak_classifier(leaf).fit(
+                train[feature_names], quarter_target.loc[train.index].ge(quarter_cutoff))
+            estimates.append(model.predict_proba(valid[feature_names])[:, 1])
+        parts.append(pd.Series(np.mean(estimates, axis=0), index=valid.index))
+    risk_score = pd.concat(parts).loc[regression_oof.index].to_numpy()
+    observed = regression_oof.actual_quarter_max.to_numpy() >= quarter_cutoff
+    threshold = threshold_for_recall(risk_score, observed, minimum_recall=0.85)
+    return {"selection_rule": "highest score threshold with at least 85% recall on April-July validation",
+            "risk_score_note": "Class-balanced classifier scores are ranking scores, not calibrated probabilities.",
+            "minimum_validation_recall": 0.85,
+            "alert_threshold": threshold,
+            "validation_average_precision": float(average_precision_score(observed, risk_score)),
+            "regression_validation_average_precision": float(average_precision_score(
+                observed, regression_oof.predicted_quarter_max.to_numpy())),
+            "validation_alert": alert_scores(regression_oof.actual_quarter_max.to_numpy(),
+                                              risk_score, quarter_cutoff, threshold)}
 
 
 def alert_scores(actual: np.ndarray, estimate: np.ndarray, peak_cutoff: float,
@@ -378,6 +426,8 @@ def run(data_path: Path, output: Path) -> None:
     stage_two, oof = stage_two_validation(development, quarter_target, feature_names,
                                           quarter_peak_cutoff)
     stage_three = select_idle_gate(oof, clean, development)
+    stage_four = stage_four_validation(development, quarter_target, feature_names,
+                                       quarter_peak_cutoff, oof)
     model = fit_ridge(x_train, y_train, chosen_alpha)
     ridge_prediction = ridge_predict(model, x_test)
     hgb = make_hgb(chosen_leaf).fit(x_train, y_train)
@@ -395,8 +445,14 @@ def run(data_path: Path, output: Path) -> None:
     idle_gated_prediction = np.where(gate, test.power_lag_1.to_numpy(),
                                       ensemble_prediction)
     quarter_prediction = np.mean(quarter_predictions, axis=0)
+    peak_risk_score = np.mean([
+        make_peak_classifier(leaf).fit(
+            development[feature_names], quarter_target.loc[development.index].ge(
+                quarter_peak_cutoff)).predict_proba(test[feature_names])[:, 1]
+        for leaf in (20, 50)], axis=0)
     quarter_actual = quarter_target.loc[test.index].to_numpy()
     alert_threshold = stage_two["quarter_peak_alert_threshold"]
+    classifier_threshold = stage_four["alert_threshold"]
 
     predictions = pd.DataFrame({"actual": y_test, "persistence": test["power_lag_1"].to_numpy(),
                                 "weekly": test["power_lag_168"].to_numpy(),
@@ -406,7 +462,9 @@ def run(data_path: Path, output: Path) -> None:
                                 "idle_gate_applied": gate,
                                 "quarter_actual": quarter_actual,
                                 "quarter_prediction": quarter_prediction,
-                                "quarter_peak_alert": quarter_prediction >= alert_threshold},
+                                "quarter_peak_alert": quarter_prediction >= alert_threshold,
+                                "peak_risk_score": peak_risk_score,
+                                "peak_classifier_alert": peak_risk_score >= classifier_threshold},
                                index=test.index)
     output.mkdir(parents=True, exist_ok=True)
     predictions.to_csv(output / "test_predictions.csv", index_label="timestamp")
@@ -428,6 +486,7 @@ def run(data_path: Path, output: Path) -> None:
         "model_selection": selection,
         "stage_two_validation": stage_two,
         "stage_three_validation": stage_three,
+        "stage_four_validation": stage_four,
         "chosen_ridge_alpha": chosen_alpha,
         "chosen_hgb_min_samples_leaf": chosen_leaf,
         "final_fit_rows": len(development),
@@ -437,6 +496,10 @@ def run(data_path: Path, output: Path) -> None:
                                             quarter_peak_cutoff),
         "quarter_peak_alert_test": alert_scores(quarter_actual, quarter_prediction,
                                                  quarter_peak_cutoff, alert_threshold),
+        "quarter_peak_classifier_test": alert_scores(quarter_actual, peak_risk_score,
+                                                       quarter_peak_cutoff, classifier_threshold),
+        "quarter_peak_classifier_test_average_precision": float(average_precision_score(
+            quarter_actual >= quarter_peak_cutoff, peak_risk_score)),
         "ensemble_error_conditions": error_conditions(test, ensemble_prediction, peak_cutoff),
         "idle_gated_error_conditions": error_conditions(test, idle_gated_prediction, peak_cutoff),
         "observed_test_conditions": condition_analysis(clean, test, idle_gated_prediction,
@@ -451,8 +514,10 @@ def run(data_path: Path, output: Path) -> None:
                       "model_selection_mean_mae": selection["mean_mae"],
                       "stage_two_validation": stage_two,
                       "stage_three_selected_gate": stage_three["selected"],
+                      "stage_four_validation": stage_four,
                       "test_metrics": report["test_metrics"],
-                      "quarter_peak_alert_test": report["quarter_peak_alert_test"]},
+                      "quarter_peak_alert_test": report["quarter_peak_alert_test"],
+                      "quarter_peak_classifier_test": report["quarter_peak_classifier_test"]},
                      ensure_ascii=False, indent=2))
 
 
