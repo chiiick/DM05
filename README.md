@@ -34,3 +34,5 @@ python3 -m unittest discover -s tests
 현재 평균 전력 평가 MAE는 **5.067**이며, 개발 중 이미 확인한 8~9월에 대한 월별 재학습 결과입니다. 새로운 독립 시험 점수가 아닙니다. 피크 직접 분류는 같은 기간 미탐 7시간, 오경보 126시간으로, 현장 비용에 따른 선택이 필요합니다.
 
 [9차 특징 실험](STAGE9.md)은 `python3 research.py --stage 9`로 실행합니다. 4~6월로 선택하고 7월을 별도로 진단하며, 선택 기준과 다음 실험 계획은 [EXPERIMENTS.md](EXPERIMENTS.md)에 기록했습니다.
+
+[10차 알고리즘 비교](STAGE10.md)는 `python3 research.py --stage 10`으로 재현합니다. 선택된 ExtraTrees의 8~9월 MAE는 4.904입니다. 8차 저장 모델은 아직 이 후보로 교체하지 않았으며 후속 검증 후 연결합니다.
