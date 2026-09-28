@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 
-from forecast import alert_scores, make_features, read_data
+from forecast import alert_scores, idle_mask, make_features, read_data
 
 
 DATA = Path(__file__).resolve().parents[1] / "okm_augumented_2021.csv"
@@ -35,6 +35,17 @@ class FeatureTimingTest(unittest.TestCase):
         report = alert_scores(actual, predicted, peak_cutoff=182,
                               alert_threshold=172)
         self.assertEqual((report["tp"], report["fp"], report["fn"]), (1, 2, 1))
+
+    def test_idle_signal_excludes_current_hour_production(self):
+        clean, _ = read_data(DATA)
+        frame, _ = make_features(clean)
+        stamp = "2021-06-15 10:00:00"
+        row = frame.loc[[stamp]]
+        original = idle_mask(clean, row, 6, 25)
+        changed = clean.copy()
+        changed.loc[stamp, "생산량"] = 99999
+        altered = idle_mask(changed, row, 6, 25)
+        np.testing.assert_array_equal(original, altered)
 
 
 if __name__ == "__main__":

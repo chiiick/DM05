@@ -21,4 +21,4 @@ python3 -m unittest discover -s tests
 - `시간`이 손상된 2021년 7월 13일과 15일은 시각을 복원할 근거가 없어 제외합니다. 정확한 지연 특징이 그 간격을 건너지 않도록 빈 시간을 유지합니다.
 - 시간 평균 피크는 **1~6월 시간 평균 전력의 95백분위**, 15분 최대값 피크는 **1~6월 시간별 15분 최대값의 95백분위**를 임시 기준으로 삼습니다. 두 목표 모두 미래의 해당 시간 관측값은 학습 정답이나 사후 평가에만 사용합니다.
 
-단계별 변경과 수치는 [STAGE1.md](STAGE1.md), [STAGE2.md](STAGE2.md)에서 확인할 수 있습니다. 기존 분석은 [ANALYSIS.md](ANALYSIS.md), 과제 원문 대비 한계와 제출 항목은 [ROADMAP.md](ROADMAP.md)에 남겨두었습니다.
+단계별 변경과 수치는 [STAGE1.md](STAGE1.md), [STAGE2.md](STAGE2.md), [STAGE3.md](STAGE3.md)에서 확인할 수 있습니다. 기존 분석은 [ANALYSIS.md](ANALYSIS.md), 과제 원문 대비 한계와 제출 항목은 [ROADMAP.md](ROADMAP.md)에 남겨두었습니다.

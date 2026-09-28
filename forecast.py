@@ -192,7 +192,7 @@ def make_hgb(min_samples_leaf: int) -> HistGradientBoostingRegressor:
 
 
 def stage_two_validation(frame: pd.DataFrame, quarter_target: pd.Series,
-                         feature_names: list[str], quarter_cutoff: float) -> dict:
+                         feature_names: list[str], quarter_cutoff: float) -> tuple[dict, pd.DataFrame]:
     """Cross-validated blend and quarter-peak alarm; test data are not used."""
     folds = [("2021-04-01", "2021-05-01"), ("2021-05-01", "2021-06-01"),
              ("2021-06-01", "2021-07-01"), ("2021-07-01", "2021-08-01")]
@@ -241,13 +241,44 @@ def stage_two_validation(frame: pd.DataFrame, quarter_target: pd.Series,
     tp = int(np.sum(alarm & observed))
     fp = int(np.sum(alarm & ~observed))
     fn = int(np.sum(~alarm & observed))
-    return {"fold_mae": fold_mae,
+    report = {"fold_mae": fold_mae,
             "mean_fold_mae": {name: float(np.mean([v[name] for v in fold_mae.values()]))
                               for name in ("mean_20", "mean_50", "predicted_mean")},
             "quarter_peak_alert_threshold": threshold,
             "quarter_peak_validation_f2": best[0],
             "quarter_peak_validation_counts": {"tp": tp, "fp": fp, "fn": fn},
             "quarter_peak_validation_n": int(len(oof))}
+    return report, oof
+
+
+def idle_mask(clean: pd.DataFrame, frame: pd.DataFrame, hours: int,
+              power_cap: float) -> np.ndarray:
+    """Flag a low-load idle regime using observations through the prior hour."""
+    recent_production = (clean.asfreq("h")["생산량"].shift(1)
+                         .rolling(hours, min_periods=hours).sum().reindex(frame.index))
+    return (recent_production.eq(0) & frame.power_lag_1.le(power_cap)).to_numpy()
+
+
+def select_idle_gate(oof: pd.DataFrame, clean: pd.DataFrame,
+                     frame: pd.DataFrame) -> dict:
+    """Select a persistence override by equal-weighted monthly validation MAE."""
+    signal_frame = frame.loc[oof.index]
+    month = oof.index.strftime("%Y-%m")
+    records = []
+    for hours in (6, 12, 24):
+        for cap in (25, 30, 35, 40, 50):
+            mask = idle_mask(clean, signal_frame, hours, cap)
+            estimate = np.where(mask, signal_frame.power_lag_1, oof.predicted_mean)
+            absolute_error = pd.Series(np.abs(estimate - oof.actual_mean.to_numpy()),
+                                       index=oof.index)
+            month_mae = {str(key): float(value) for key, value in
+                         absolute_error.groupby(month).mean().items()}
+            records.append({"hours": hours, "power_cap": cap, "gate_rows": int(mask.sum()),
+                            "fold_mae": month_mae,
+                            "mean_fold_mae": float(np.mean(list(month_mae.values())))})
+    selected = min(records, key=lambda row: row["mean_fold_mae"])
+    return {"selection_metric": "equal-weighted mean of April-July monthly MAE",
+            "candidates": records, "selected": selected}
 
 
 def alert_scores(actual: np.ndarray, estimate: np.ndarray, peak_cutoff: float,
@@ -317,7 +348,7 @@ def save_plot(predictions: pd.DataFrame, output: Path) -> None:
     first_week = predictions.iloc[:168]
     fig, ax = plt.subplots(figsize=(12, 4))
     ax.plot(first_week.index, first_week["actual"], label="Actual", linewidth=1)
-    ax.plot(first_week.index, first_week["ensemble"], label="Ensemble 1h ahead", linewidth=1)
+    ax.plot(first_week.index, first_week["idle_gated"], label="Idle-gated 1h ahead", linewidth=1)
     ax.set(title="First test week: one-hour-ahead electricity demand", ylabel="Hourly mean demand")
     ax.legend()
     fig.autofmt_xdate()
@@ -344,8 +375,9 @@ def run(data_path: Path, output: Path) -> None:
     quarter_train_max = clean.loc[train.index, POWER_COLUMNS].max(axis=1)
     quarter_peak_cutoff = float(np.quantile(quarter_train_max.to_numpy(), 0.95))
     quarter_target = clean.loc[frame.index, POWER_COLUMNS].max(axis=1)
-    stage_two = stage_two_validation(development, quarter_target, feature_names,
-                                     quarter_peak_cutoff)
+    stage_two, oof = stage_two_validation(development, quarter_target, feature_names,
+                                          quarter_peak_cutoff)
+    stage_three = select_idle_gate(oof, clean, development)
     model = fit_ridge(x_train, y_train, chosen_alpha)
     ridge_prediction = ridge_predict(model, x_test)
     hgb = make_hgb(chosen_leaf).fit(x_train, y_train)
@@ -358,6 +390,10 @@ def run(data_path: Path, output: Path) -> None:
         ensemble_predictions.append(np.maximum(0, mean_model.predict(x_test)))
         quarter_predictions.append(np.maximum(0, quarter_model.predict(x_test)))
     ensemble_prediction = np.mean(ensemble_predictions, axis=0)
+    gate_choice = stage_three["selected"]
+    gate = idle_mask(clean, test, gate_choice["hours"], gate_choice["power_cap"])
+    idle_gated_prediction = np.where(gate, test.power_lag_1.to_numpy(),
+                                      ensemble_prediction)
     quarter_prediction = np.mean(quarter_predictions, axis=0)
     quarter_actual = quarter_target.loc[test.index].to_numpy()
     alert_threshold = stage_two["quarter_peak_alert_threshold"]
@@ -366,6 +402,8 @@ def run(data_path: Path, output: Path) -> None:
                                 "weekly": test["power_lag_168"].to_numpy(),
                                 "ridge": ridge_prediction, "hgb": hgb_prediction,
                                 "ensemble": ensemble_prediction,
+                                "idle_gated": idle_gated_prediction,
+                                "idle_gate_applied": gate,
                                 "quarter_actual": quarter_actual,
                                 "quarter_prediction": quarter_prediction,
                                 "quarter_peak_alert": quarter_prediction >= alert_threshold},
@@ -389,17 +427,19 @@ def run(data_path: Path, output: Path) -> None:
         "train_peak_95th_percentile": peak_cutoff,
         "model_selection": selection,
         "stage_two_validation": stage_two,
+        "stage_three_validation": stage_three,
         "chosen_ridge_alpha": chosen_alpha,
         "chosen_hgb_min_samples_leaf": chosen_leaf,
         "final_fit_rows": len(development),
         "test_metrics": {name: scores(y_test, predictions[name].to_numpy(), peak_cutoff)
-                         for name in ("persistence", "weekly", "ridge", "hgb", "ensemble")},
+                         for name in ("persistence", "weekly", "ridge", "hgb", "ensemble", "idle_gated")},
         "quarter_max_test_metrics": scores(quarter_actual, quarter_prediction,
                                             quarter_peak_cutoff),
         "quarter_peak_alert_test": alert_scores(quarter_actual, quarter_prediction,
                                                  quarter_peak_cutoff, alert_threshold),
         "ensemble_error_conditions": error_conditions(test, ensemble_prediction, peak_cutoff),
-        "observed_test_conditions": condition_analysis(clean, test, ensemble_prediction,
+        "idle_gated_error_conditions": error_conditions(test, idle_gated_prediction, peak_cutoff),
+        "observed_test_conditions": condition_analysis(clean, test, idle_gated_prediction,
                                                          peak_cutoff, quarter_peak_cutoff),
         "ridge_coefficients_standardized": {name: float(value) for name, value in
                                              zip(feature_names, model["coefficients"])},
@@ -410,6 +450,7 @@ def run(data_path: Path, output: Path) -> None:
                       "chosen_hgb_min_samples_leaf": chosen_leaf,
                       "model_selection_mean_mae": selection["mean_mae"],
                       "stage_two_validation": stage_two,
+                      "stage_three_selected_gate": stage_three["selected"],
                       "test_metrics": report["test_metrics"],
                       "quarter_peak_alert_test": report["quarter_peak_alert_test"]},
                      ensure_ascii=False, indent=2))
