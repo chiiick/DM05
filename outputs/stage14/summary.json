@@ -1,0 +1,155 @@
+{
+  "interval_calibration": {
+    "2021-08": {
+      "n": 572,
+      "global_radius": 14.282638888888883,
+      "regimes": {
+        "idle": {
+          "n": 169,
+          "radius": 2.0,
+          "fallback_to_global": false
+        },
+        "other": {
+          "n": 403,
+          "radius": 16.911805555555574,
+          "fallback_to_global": false
+        }
+      },
+      "calibration_start": "2021-07-01 00:00:00",
+      "calibration_end": "2021-07-31 23:00:00",
+      "evaluation_start": "2021-08-01 00:00:00"
+    },
+    "2021-09": {
+      "n": 744,
+      "global_radius": 14.30972222222222,
+      "regimes": {
+        "idle": {
+          "n": 321,
+          "radius": 2.0,
+          "fallback_to_global": false
+        },
+        "other": {
+          "n": 423,
+          "radius": 18.215277777777757,
+          "fallback_to_global": false
+        }
+      },
+      "calibration_start": "2021-08-01 00:00:00",
+      "calibration_end": "2021-08-31 23:00:00",
+      "evaluation_start": "2021-09-01 00:00:00"
+    }
+  },
+  "intervals": {
+    "global": {
+      "n": 1080,
+      "coverage": 0.9222222222222223,
+      "mean_width": 28.357310313785995,
+      "mean_interval_score_90": 42.92186149691358
+    },
+    "conditional": {
+      "n": 1080,
+      "coverage": 0.9287037037037037,
+      "mean_width": 23.396732253086427,
+      "mean_interval_score_90": 37.04464248971192
+    }
+  },
+  "intervals_by_prior_state": {
+    "False": {
+      "global": {
+        "n": 681,
+        "coverage": 0.8883994126284875,
+        "mean_width": 28.585799069995097,
+        "mean_interval_score_90": 47.3464757709251
+      },
+      "conditional": {
+        "n": 681,
+        "coverage": 0.9236417033773862,
+        "mean_width": 34.8112640724425,
+        "mean_interval_score_90": 48.61411731114373
+      }
+    },
+    "True": {
+      "global": {
+        "n": 399,
+        "coverage": 0.9799498746867168,
+        "mean_width": 27.967333263714824,
+        "mean_interval_score_90": 35.37007623224727
+      },
+      "conditional": {
+        "n": 399,
+        "coverage": 0.9373433583959899,
+        "mean_width": 3.9147869674185465,
+        "mean_interval_score_90": 17.29824561403509
+      }
+    }
+  },
+  "risk_calibration": {
+    "2021-08": {
+      "train_end": "2021-06-30 23:00:00",
+      "calibration_start": "2021-07-01 00:00:00",
+      "calibration_end": "2021-07-31 23:00:00",
+      "score_threshold": 0.597128325059731
+    },
+    "2021-09": {
+      "train_end": "2021-07-31 23:00:00",
+      "calibration_start": "2021-08-01 00:00:00",
+      "calibration_end": "2021-08-31 23:00:00",
+      "score_threshold": 0.32317529849958704
+    }
+  },
+  "risk_policies": {
+    "legacy_alert": {
+      "n": 1080,
+      "actual_peak_hours": 123,
+      "tp": 116,
+      "fp": 126,
+      "fn": 7,
+      "precision": 0.4793388429752066,
+      "recall": 0.943089430894309,
+      "f2": 0.7901907356948229
+    },
+    "stage12_alert": {
+      "n": 1080,
+      "actual_peak_hours": 123,
+      "tp": 95,
+      "fp": 98,
+      "fn": 28,
+      "precision": 0.49222797927461137,
+      "recall": 0.7723577235772358,
+      "f2": 0.6934306569343065
+    },
+    "recent_alert": {
+      "n": 1080,
+      "actual_peak_hours": 123,
+      "tp": 79,
+      "fp": 70,
+      "fn": 44,
+      "precision": 0.5302013422818792,
+      "recall": 0.6422764227642277,
+      "f2": 0.6162246489859594
+    }
+  },
+  "miss_cost_relative_to_false_alarm": {
+    "1": {
+      "legacy_alert": 133,
+      "stage12_alert": 126,
+      "recent_alert": 114
+    },
+    "2": {
+      "legacy_alert": 140,
+      "stage12_alert": 154,
+      "recent_alert": 158
+    },
+    "5": {
+      "legacy_alert": 161,
+      "stage12_alert": 238,
+      "recent_alert": 290
+    },
+    "10": {
+      "legacy_alert": 196,
+      "stage12_alert": 378,
+      "recent_alert": 510
+    }
+  },
+  "note": "Cost units are hypothetical; report tradeoffs, do not choose a policy from these test costs."
+}
