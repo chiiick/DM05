@@ -32,3 +32,5 @@ python3 -m unittest discover -s tests
 [8차 추론](STAGE8.md)은 정답이 없는 다음 한 시간을 예측합니다. 저장한 모델은 `artifacts/latest.joblib`, 학습·입력 기록은 `artifacts/latest.json`, 예측은 `outputs/stage8/next_prediction.json`에 생성됩니다. 모델 바이너리는 위 명령으로 재생성합니다. 과거 재현을 위한 모델 학습 종료 시점과 `--last-observed-hour` 사용법은 8차 문서에 있습니다.
 
 현재 평균 전력 평가 MAE는 **5.067**이며, 개발 중 이미 확인한 8~9월에 대한 월별 재학습 결과입니다. 새로운 독립 시험 점수가 아닙니다. 피크 직접 분류는 같은 기간 미탐 7시간, 오경보 126시간으로, 현장 비용에 따른 선택이 필요합니다.
+
+[9차 특징 실험](STAGE9.md)은 `python3 research.py --stage 9`로 실행합니다. 4~6월로 선택하고 7월을 별도로 진단하며, 선택 기준과 다음 실험 계획은 [EXPERIMENTS.md](EXPERIMENTS.md)에 기록했습니다.

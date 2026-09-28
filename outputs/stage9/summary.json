@@ -1,0 +1,154 @@
+{
+  "stage": 9,
+  "selection_months": [
+    "2021-04",
+    "2021-05",
+    "2021-06"
+  ],
+  "selection_metric": "equal-weighted monthly MAE",
+  "candidate_scores": {
+    "base": 5.328024721221319,
+    "quarter": 5.2423548846648345,
+    "regime": 5.166778722641546,
+    "combined": 5.105911874659961
+  },
+  "chosen": "combined",
+  "config": {
+    "features": "combined",
+    "model": "hgb",
+    "gate": true
+  },
+  "input_sha256": "404b9150f8ee4fb47e807fbc1aacdf9fddff5c3297d7802449e247981fcc7d75",
+  "features": [
+    "power_lag_1",
+    "power_lag_2",
+    "power_lag_3",
+    "power_lag_23",
+    "power_lag_24",
+    "power_lag_25",
+    "power_lag_48",
+    "power_lag_167",
+    "power_lag_168",
+    "power_lag_169",
+    "production_lag_1",
+    "production_lag_2",
+    "production_lag_3",
+    "production_lag_24",
+    "production_lag_25",
+    "previous_hour_final_quarter",
+    "power_past_6h_mean",
+    "power_past_24h_mean",
+    "power_past_6h_std",
+    "power_recent_change",
+    "production_recent_change",
+    "previous_hour_active",
+    "past_6h_active_share",
+    "hour_sin",
+    "hour_cos",
+    "weekday_sin",
+    "weekday_cos",
+    "month_sin",
+    "month_cos",
+    "weekend",
+    "hour",
+    "weekday",
+    "day_of_year",
+    "weekday_work_start",
+    "previous_15분",
+    "previous_30분",
+    "previous_45분",
+    "previous_quarter_ramp",
+    "previous_last_quarter_ramp",
+    "previous_quarter_range",
+    "previous_quarter_max",
+    "day_ago_quarter_max",
+    "past_6_active_share",
+    "past_6_production_logmean",
+    "past_12_active_share",
+    "past_12_production_logmean",
+    "past_24_active_share",
+    "past_24_production_logmean",
+    "past_48_active_share",
+    "past_48_production_logmean",
+    "past_24_power_min",
+    "past_24_power_max",
+    "past_48_power_mean",
+    "power_relative_to_day_mean",
+    "preceding_idle_hours"
+  ],
+  "configs": {
+    "base": {
+      "features": "base",
+      "model": "hgb",
+      "gate": true
+    },
+    "quarter": {
+      "features": "quarter",
+      "model": "hgb",
+      "gate": true
+    },
+    "regime": {
+      "features": "regime",
+      "model": "hgb",
+      "gate": true
+    },
+    "combined": {
+      "features": "combined",
+      "model": "hgb",
+      "gate": true
+    }
+  },
+  "july_audit": {
+    "base": {
+      "n": 572,
+      "mae": 5.963861314711665,
+      "rmse": 9.135310049395622,
+      "wape": 0.060631830368360604
+    },
+    "quarter": {
+      "n": 572,
+      "mae": 5.761565206679814,
+      "rmse": 8.824863257265761,
+      "wape": 0.05857517903810415
+    },
+    "regime": {
+      "n": 572,
+      "mae": 6.0277927365867665,
+      "rmse": 9.20251997789393,
+      "wape": 0.061281791680636126
+    },
+    "combined": {
+      "n": 572,
+      "mae": 5.895725978695579,
+      "rmse": 9.062225433101888,
+      "wape": 0.05993912979780444
+    }
+  },
+  "evaluation": {
+    "n": 1080,
+    "mae": 5.102586696544228,
+    "rmse": 9.056503791894459,
+    "wape": 0.058129508156660896
+  },
+  "by_month": {
+    "2021-08": {
+      "n": 744,
+      "mae": 5.261737967876993,
+      "rmse": 9.501618660800384,
+      "wape": 0.0647802129387315
+    },
+    "2021-09": {
+      "n": 336,
+      "mae": 4.750180310021678,
+      "rmse": 7.9830546853657935,
+      "wape": 0.046436256849299806
+    }
+  },
+  "after_august_first_week": {
+    "n": 912,
+    "mae": 5.8692912634514975,
+    "rmse": 9.841054904364116,
+    "wape": 0.05870900611206763
+  },
+  "note": "Retrospective study on previously inspected data. July is a separate diagnostic, not pristine external validation."
+}

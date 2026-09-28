@@ -1,0 +1,22 @@
+{
+  "stage": 9,
+  "selection_months": [
+    "2021-04",
+    "2021-05",
+    "2021-06"
+  ],
+  "selection_metric": "equal-weighted monthly MAE",
+  "candidate_scores": {
+    "base": 5.328024721221319,
+    "quarter": 5.2423548846648345,
+    "regime": 5.166778722641546,
+    "combined": 5.105911874659961
+  },
+  "chosen": "combined",
+  "config": {
+    "features": "combined",
+    "model": "hgb",
+    "gate": true
+  },
+  "input_sha256": "404b9150f8ee4fb47e807fbc1aacdf9fddff5c3297d7802449e247981fcc7d75"
+}
