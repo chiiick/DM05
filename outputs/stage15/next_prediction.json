@@ -1,0 +1,27 @@
+{
+  "last_observed_hour": "2021-09-14 23:00:00",
+  "forecast_hour": "2021-09-15 00:00:00",
+  "predicted_mean": 73.87083333333334,
+  "prior_idle_state": false,
+  "conditional_interval_90": [
+    62.77916666666667,
+    84.9625
+  ],
+  "global_interval_reference_90": [
+    63.63402777777776,
+    84.10763888888891
+  ],
+  "peak_risk_score": 0.0045474680287498626,
+  "peak_alert": false,
+  "peak_policy": "retained_stage4_recall_policy",
+  "peak_score_cutoff": 0.36189282274441137,
+  "mean_train_end": "2021-09-14 23:00:00",
+  "peak_train_end": "2021-07-31 23:00:00",
+  "calibration_end": "2021-09-14 23:00:00",
+  "artifact_sha256": "968ee874726f827da6273b87a5561ef0f2177a11e849c31255175b7adf7e2cf4",
+  "history_sha256": "404b9150f8ee4fb47e807fbc1aacdf9fddff5c3297d7802449e247981fcc7d75",
+  "notes": [
+    "Source power units unconfirmed; score is not a calibrated probability.",
+    "Intervals are empirical and may fail during abrupt startup or regime changes."
+  ]
+}
