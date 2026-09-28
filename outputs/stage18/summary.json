@@ -1,0 +1,742 @@
+{
+  "input_sha256": "404b9150f8ee4fb47e807fbc1aacdf9fddff5c3297d7802449e247981fcc7d75",
+  "forecast_source_sha256": "e53151525c74481462565d81242a3f7a5187cfcd8c330c30b8db8ec3593d178f",
+  "daily_forecast_method": "previous_week",
+  "assumptions": {
+    "flexible_fractions": [
+      0.0,
+      0.05,
+      0.1,
+      0.2
+    ],
+    "max_shift_hours": 2,
+    "allowed_hours": [
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "arrival_limit_fraction_of_forecast_daily_peak": 0.1,
+    "objective": "Minimize forecast hourly-mean maximum, then minimize movement",
+    "units": "Unconfirmed source units. Sum of hourly mean values is a load proxy, not asserted kWh.",
+    "limitation": "Assumed divisible flexible load, perfect execution and additive response. No real job schedule, equipment constraints, production feasibility or tariff. Not causal savings or 15-minute demand reduction."
+  },
+  "scenarios": {
+    "0.0": {
+      "n_days": 45,
+      "feasible_days": 45,
+      "planned_move_days": 0,
+      "feasible_moved_days": 0,
+      "forecast_mean_peak_reduction": 0.0,
+      "arithmetic_simulated_mean_peak_reduction_all_proposals": 0.0,
+      "simulated_mean_peak_reduction_feasible_only": 0.0,
+      "simulated_mean_peak_reduction_feasible_moved_only": null,
+      "simulated_rebound_days_all_proposals": 0,
+      "simulated_rebound_days_feasible_only": 0,
+      "assumed_share_violation_days": 0,
+      "mean_moved_load_sum": 0.0
+    },
+    "0.05": {
+      "n_days": 45,
+      "feasible_days": 22,
+      "planned_move_days": 32,
+      "feasible_moved_days": 9,
+      "forecast_mean_peak_reduction": 5.771111040000003,
+      "arithmetic_simulated_mean_peak_reduction_all_proposals": -0.040000022222221154,
+      "simulated_mean_peak_reduction_feasible_only": 0.18409088636363694,
+      "simulated_mean_peak_reduction_feasible_moved_only": 0.44999994444444585,
+      "simulated_rebound_days_all_proposals": 10,
+      "simulated_rebound_days_feasible_only": 1,
+      "assumed_share_violation_days": 23,
+      "mean_moved_load_sum": 12.672221942222233
+    },
+    "0.1": {
+      "n_days": 45,
+      "feasible_days": 21,
+      "planned_move_days": 32,
+      "feasible_moved_days": 8,
+      "forecast_mean_peak_reduction": 10.712913509135804,
+      "arithmetic_simulated_mean_peak_reduction_all_proposals": 0.05513577580247089,
+      "simulated_mean_peak_reduction_feasible_only": 1.1595237904761913,
+      "simulated_mean_peak_reduction_feasible_moved_only": 3.0437499500000023,
+      "simulated_rebound_days_all_proposals": 11,
+      "simulated_rebound_days_feasible_only": 0,
+      "assumed_share_violation_days": 24,
+      "mean_moved_load_sum": 47.647017489629675
+    },
+    "0.2": {
+      "n_days": 45,
+      "feasible_days": 39,
+      "planned_move_days": 32,
+      "feasible_moved_days": 26,
+      "forecast_mean_peak_reduction": 12.688597171152797,
+      "arithmetic_simulated_mean_peak_reduction_all_proposals": 0.1578059586948833,
+      "simulated_mean_peak_reduction_feasible_only": 2.278878672853071,
+      "simulated_mean_peak_reduction_feasible_moved_only": 3.4183180092796066,
+      "simulated_rebound_days_all_proposals": 11,
+      "simulated_rebound_days_feasible_only": 6,
+      "assumed_share_violation_days": 6,
+      "mean_moved_load_sum": 75.79105227427615
+    }
+  },
+  "peak_conditions": {
+    "by_known_target_hour": {
+      "0": {
+        "n_hours": 45,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "quarter_max": 87.0
+      },
+      "1": {
+        "n_hours": 45,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "quarter_max": 121.0
+      },
+      "2": {
+        "n_hours": 45,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "quarter_max": 126.0
+      },
+      "3": {
+        "n_hours": 45,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "quarter_max": 123.0
+      },
+      "4": {
+        "n_hours": 45,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "quarter_max": 120.0
+      },
+      "5": {
+        "n_hours": 45,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "quarter_max": 116.0
+      },
+      "6": {
+        "n_hours": 45,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "quarter_max": 129.0
+      },
+      "7": {
+        "n_hours": 45,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "quarter_max": 166.0
+      },
+      "8": {
+        "n_hours": 45,
+        "peak_hours": 18,
+        "peak_rate": 0.4,
+        "quarter_max": 218.0
+      },
+      "9": {
+        "n_hours": 45,
+        "peak_hours": 16,
+        "peak_rate": 0.35555555555555557,
+        "quarter_max": 204.0
+      },
+      "10": {
+        "n_hours": 45,
+        "peak_hours": 14,
+        "peak_rate": 0.3111111111111111,
+        "quarter_max": 201.0
+      },
+      "11": {
+        "n_hours": 45,
+        "peak_hours": 20,
+        "peak_rate": 0.4444444444444444,
+        "quarter_max": 204.0
+      },
+      "12": {
+        "n_hours": 45,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "quarter_max": 144.0
+      },
+      "13": {
+        "n_hours": 45,
+        "peak_hours": 13,
+        "peak_rate": 0.28888888888888886,
+        "quarter_max": 205.0
+      },
+      "14": {
+        "n_hours": 45,
+        "peak_hours": 17,
+        "peak_rate": 0.37777777777777777,
+        "quarter_max": 207.0
+      },
+      "15": {
+        "n_hours": 45,
+        "peak_hours": 12,
+        "peak_rate": 0.26666666666666666,
+        "quarter_max": 202.0
+      },
+      "16": {
+        "n_hours": 45,
+        "peak_hours": 9,
+        "peak_rate": 0.2,
+        "quarter_max": 191.0
+      },
+      "17": {
+        "n_hours": 45,
+        "peak_hours": 2,
+        "peak_rate": 0.044444444444444446,
+        "quarter_max": 186.0
+      },
+      "18": {
+        "n_hours": 45,
+        "peak_hours": 1,
+        "peak_rate": 0.022222222222222223,
+        "quarter_max": 194.0
+      },
+      "19": {
+        "n_hours": 45,
+        "peak_hours": 1,
+        "peak_rate": 0.022222222222222223,
+        "quarter_max": 182.0
+      },
+      "20": {
+        "n_hours": 45,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "quarter_max": 152.0
+      },
+      "21": {
+        "n_hours": 45,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "quarter_max": 138.0
+      },
+      "22": {
+        "n_hours": 45,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "quarter_max": 129.0
+      },
+      "23": {
+        "n_hours": 45,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "quarter_max": 129.0
+      }
+    },
+    "by_known_weekday": {
+      "0": {
+        "n_hours": 168,
+        "peak_hours": 26,
+        "peak_rate": 0.15476190476190477,
+        "quarter_max": 215.0
+      },
+      "1": {
+        "n_hours": 168,
+        "peak_hours": 22,
+        "peak_rate": 0.13095238095238096,
+        "quarter_max": 201.0
+      },
+      "2": {
+        "n_hours": 144,
+        "peak_hours": 26,
+        "peak_rate": 0.18055555555555555,
+        "quarter_max": 218.0
+      },
+      "3": {
+        "n_hours": 144,
+        "peak_hours": 29,
+        "peak_rate": 0.2013888888888889,
+        "quarter_max": 202.0
+      },
+      "4": {
+        "n_hours": 144,
+        "peak_hours": 20,
+        "peak_rate": 0.1388888888888889,
+        "quarter_max": 207.0
+      },
+      "5": {
+        "n_hours": 144,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "quarter_max": 119.0
+      },
+      "6": {
+        "n_hours": 168,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "quarter_max": 41.0
+      }
+    },
+    "by_previous_hour_production": {
+      "False": {
+        "n_hours": 464,
+        "peak_hours": 2,
+        "peak_rate": 0.004310344827586207,
+        "quarter_max": 190.0
+      },
+      "True": {
+        "n_hours": 616,
+        "peak_hours": 121,
+        "peak_rate": 0.19642857142857142,
+        "quarter_max": 218.0
+      }
+    },
+    "by_observed_production_state": {
+      "idle": {
+        "n_hours": 435,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "quarter_max": 122.0
+      },
+      "running": {
+        "n_hours": 588,
+        "peak_hours": 121,
+        "peak_rate": 0.20578231292517007,
+        "quarter_max": 218.0
+      },
+      "shutdown": {
+        "n_hours": 28,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "quarter_max": 134.0
+      },
+      "startup": {
+        "n_hours": 29,
+        "peak_hours": 2,
+        "peak_rate": 0.06896551724137931,
+        "quarter_max": 190.0
+      }
+    },
+    "episodes": [
+      {
+        "start": "2021-08-09 08:00:00",
+        "end": "2021-08-09 11:00:00",
+        "duration_hours": 4,
+        "quarter_max": 215.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-09 13:00:00",
+        "end": "2021-08-09 16:00:00",
+        "duration_hours": 4,
+        "quarter_max": 200.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-10 08:00:00",
+        "end": "2021-08-10 11:00:00",
+        "duration_hours": 4,
+        "quarter_max": 195.0,
+        "one_hour_policy_alert_at_onset": false
+      },
+      {
+        "start": "2021-08-10 13:00:00",
+        "end": "2021-08-10 13:00:00",
+        "duration_hours": 1,
+        "quarter_max": 190.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-10 16:00:00",
+        "end": "2021-08-10 16:00:00",
+        "duration_hours": 1,
+        "quarter_max": 182.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-11 08:00:00",
+        "end": "2021-08-11 11:00:00",
+        "duration_hours": 4,
+        "quarter_max": 218.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-11 13:00:00",
+        "end": "2021-08-11 14:00:00",
+        "duration_hours": 2,
+        "quarter_max": 207.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-11 16:00:00",
+        "end": "2021-08-11 16:00:00",
+        "duration_hours": 1,
+        "quarter_max": 187.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-11 18:00:00",
+        "end": "2021-08-11 18:00:00",
+        "duration_hours": 1,
+        "quarter_max": 194.0,
+        "one_hour_policy_alert_at_onset": false
+      },
+      {
+        "start": "2021-08-12 08:00:00",
+        "end": "2021-08-12 11:00:00",
+        "duration_hours": 4,
+        "quarter_max": 199.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-12 13:00:00",
+        "end": "2021-08-12 15:00:00",
+        "duration_hours": 3,
+        "quarter_max": 197.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-12 19:00:00",
+        "end": "2021-08-12 19:00:00",
+        "duration_hours": 1,
+        "quarter_max": 182.0,
+        "one_hour_policy_alert_at_onset": false
+      },
+      {
+        "start": "2021-08-13 08:00:00",
+        "end": "2021-08-13 11:00:00",
+        "duration_hours": 4,
+        "quarter_max": 207.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-13 13:00:00",
+        "end": "2021-08-13 16:00:00",
+        "duration_hours": 4,
+        "quarter_max": 200.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-16 08:00:00",
+        "end": "2021-08-16 09:00:00",
+        "duration_hours": 2,
+        "quarter_max": 190.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-18 11:00:00",
+        "end": "2021-08-18 11:00:00",
+        "duration_hours": 1,
+        "quarter_max": 183.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-18 14:00:00",
+        "end": "2021-08-18 17:00:00",
+        "duration_hours": 4,
+        "quarter_max": 188.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-19 08:00:00",
+        "end": "2021-08-19 09:00:00",
+        "duration_hours": 2,
+        "quarter_max": 185.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-19 11:00:00",
+        "end": "2021-08-19 11:00:00",
+        "duration_hours": 1,
+        "quarter_max": 188.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-19 14:00:00",
+        "end": "2021-08-19 15:00:00",
+        "duration_hours": 2,
+        "quarter_max": 185.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-20 11:00:00",
+        "end": "2021-08-20 11:00:00",
+        "duration_hours": 1,
+        "quarter_max": 193.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-20 14:00:00",
+        "end": "2021-08-20 14:00:00",
+        "duration_hours": 1,
+        "quarter_max": 184.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-23 09:00:00",
+        "end": "2021-08-23 11:00:00",
+        "duration_hours": 3,
+        "quarter_max": 191.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-23 13:00:00",
+        "end": "2021-08-23 15:00:00",
+        "duration_hours": 3,
+        "quarter_max": 196.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-24 08:00:00",
+        "end": "2021-08-24 09:00:00",
+        "duration_hours": 2,
+        "quarter_max": 196.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-24 11:00:00",
+        "end": "2021-08-24 11:00:00",
+        "duration_hours": 1,
+        "quarter_max": 188.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-24 14:00:00",
+        "end": "2021-08-24 16:00:00",
+        "duration_hours": 3,
+        "quarter_max": 201.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-25 08:00:00",
+        "end": "2021-08-25 08:00:00",
+        "duration_hours": 1,
+        "quarter_max": 182.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-25 10:00:00",
+        "end": "2021-08-25 11:00:00",
+        "duration_hours": 2,
+        "quarter_max": 189.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-25 14:00:00",
+        "end": "2021-08-25 14:00:00",
+        "duration_hours": 1,
+        "quarter_max": 184.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-26 08:00:00",
+        "end": "2021-08-26 11:00:00",
+        "duration_hours": 4,
+        "quarter_max": 199.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-26 13:00:00",
+        "end": "2021-08-26 16:00:00",
+        "duration_hours": 4,
+        "quarter_max": 202.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-27 08:00:00",
+        "end": "2021-08-27 09:00:00",
+        "duration_hours": 2,
+        "quarter_max": 190.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-27 11:00:00",
+        "end": "2021-08-27 11:00:00",
+        "duration_hours": 1,
+        "quarter_max": 182.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-30 08:00:00",
+        "end": "2021-08-30 08:00:00",
+        "duration_hours": 1,
+        "quarter_max": 183.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-30 10:00:00",
+        "end": "2021-08-30 10:00:00",
+        "duration_hours": 1,
+        "quarter_max": 186.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-31 09:00:00",
+        "end": "2021-08-31 11:00:00",
+        "duration_hours": 3,
+        "quarter_max": 187.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-08-31 13:00:00",
+        "end": "2021-08-31 14:00:00",
+        "duration_hours": 2,
+        "quarter_max": 187.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-01 08:00:00",
+        "end": "2021-09-01 10:00:00",
+        "duration_hours": 3,
+        "quarter_max": 198.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-01 13:00:00",
+        "end": "2021-09-01 16:00:00",
+        "duration_hours": 4,
+        "quarter_max": 192.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-02 09:00:00",
+        "end": "2021-09-02 11:00:00",
+        "duration_hours": 3,
+        "quarter_max": 198.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-02 13:00:00",
+        "end": "2021-09-02 14:00:00",
+        "duration_hours": 2,
+        "quarter_max": 195.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-03 11:00:00",
+        "end": "2021-09-03 11:00:00",
+        "duration_hours": 1,
+        "quarter_max": 190.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-06 10:00:00",
+        "end": "2021-09-06 10:00:00",
+        "duration_hours": 1,
+        "quarter_max": 190.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-07 08:00:00",
+        "end": "2021-09-07 08:00:00",
+        "duration_hours": 1,
+        "quarter_max": 192.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-07 11:00:00",
+        "end": "2021-09-07 11:00:00",
+        "duration_hours": 1,
+        "quarter_max": 183.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-07 13:00:00",
+        "end": "2021-09-07 14:00:00",
+        "duration_hours": 2,
+        "quarter_max": 191.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-08 15:00:00",
+        "end": "2021-09-08 15:00:00",
+        "duration_hours": 1,
+        "quarter_max": 183.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-08 17:00:00",
+        "end": "2021-09-08 17:00:00",
+        "duration_hours": 1,
+        "quarter_max": 182.0,
+        "one_hour_policy_alert_at_onset": false
+      },
+      {
+        "start": "2021-09-09 08:00:00",
+        "end": "2021-09-09 08:00:00",
+        "duration_hours": 1,
+        "quarter_max": 187.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-09 11:00:00",
+        "end": "2021-09-09 11:00:00",
+        "duration_hours": 1,
+        "quarter_max": 190.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-09 15:00:00",
+        "end": "2021-09-09 15:00:00",
+        "duration_hours": 1,
+        "quarter_max": 185.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-10 08:00:00",
+        "end": "2021-09-10 09:00:00",
+        "duration_hours": 2,
+        "quarter_max": 204.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-10 11:00:00",
+        "end": "2021-09-10 11:00:00",
+        "duration_hours": 1,
+        "quarter_max": 188.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-10 13:00:00",
+        "end": "2021-09-10 15:00:00",
+        "duration_hours": 3,
+        "quarter_max": 191.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-13 08:00:00",
+        "end": "2021-09-13 11:00:00",
+        "duration_hours": 4,
+        "quarter_max": 196.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-13 13:00:00",
+        "end": "2021-09-13 14:00:00",
+        "duration_hours": 2,
+        "quarter_max": 191.0,
+        "one_hour_policy_alert_at_onset": true
+      },
+      {
+        "start": "2021-09-13 16:00:00",
+        "end": "2021-09-13 16:00:00",
+        "duration_hours": 1,
+        "quarter_max": 182.0,
+        "one_hour_policy_alert_at_onset": false
+      },
+      {
+        "start": "2021-09-14 08:00:00",
+        "end": "2021-09-14 08:00:00",
+        "duration_hours": 1,
+        "quarter_max": 184.0,
+        "one_hour_policy_alert_at_onset": true
+      }
+    ],
+    "episode_count": 59,
+    "alerted_at_onset": 54,
+    "note": "Hour/weekday known at planning time; previous-hour production known only one hour ahead; same-hour state is post-hoc. Associations, not causal explanations. Episode onset alerts are issued after the preceding hour is observed."
+  },
+  "deployment_status": "Scenario decision support only; no automatic operational changes"
+}
