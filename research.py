@@ -106,6 +106,15 @@ def selection_scores(oof: pd.DataFrame, names: list[str]) -> dict:
     return {name: float(monthly[name].mean()) for name in names}
 
 
+def training_window(frame: pd.DataFrame, before: str | pd.Timestamp,
+                     window_days: int | None = None) -> pd.DataFrame:
+    before = pd.Timestamp(before)
+    mask = frame.index < before
+    if window_days is not None:
+        mask &= frame.index >= before - pd.Timedelta(days=window_days)
+    return frame.loc[mask]
+
+
 def evaluate_configs(data: Path, output: Path, configs: dict, stage: int) -> dict:
     clean, _ = read_data(data)
     frames = {group: richer_features(clean, group) for group in {c["features"] for c in configs.values()}}
@@ -115,9 +124,9 @@ def evaluate_configs(data: Path, output: Path, configs: dict, stage: int) -> dic
         cache = {}
         for name, config in configs.items():
             frame, features = frames[config["features"]]
-            train = frame.loc[frame.index < start]
+            train = training_window(frame, start, config.get("window_days"))
             valid = frame.loc[(frame.index >= start) & (frame.index < end)]
-            key = (config["features"], config["model"])
+            key = (config["features"], config["model"], config.get("window_days"))
             if key not in cache:
                 cache[key] = DemandModel(config["model"], features).fit(train).predict(valid)
             predictions[name] = apply_gate(clean, valid, cache[key], config["gate"])
@@ -143,7 +152,7 @@ def finish_experiment(data: Path, output: Path, clean: pd.DataFrame, frames: dic
     frame, features = frames[config["features"]]
     parts = []
     for start, end in [("2021-08-01", "2021-09-01"), ("2021-09-01", "2021-09-15")]:
-        train = frame.loc[frame.index < start]
+        train = training_window(frame, start, config.get("window_days"))
         test = frame.loc[(frame.index >= start) & (frame.index < end)]
         prediction = DemandModel(config["model"], features).fit(train).predict(test)
         prediction = apply_gate(clean, test, prediction, config["gate"])
@@ -196,12 +205,16 @@ def stage_configs(stage: int, root: Path) -> dict:
         group = previous["config"]["features"]
         return {f"{model}{'_idle' if gate else ''}": {"features": group, "model": model, "gate": gate}
                 for model in ("hgb", "extra_2", "extra_8", "forest") for gate in (False, True)}
+    if stage == 13:
+        previous = json.loads((root / "stage11/summary.json").read_text())
+        return {"expanding" if days is None else f"recent_{days}d":
+                {**previous["config"], "window_days": days} for days in (None, 28, 56, 84)}
     raise ValueError("Unknown experiment stage")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--stage", type=int, choices=[9, 10, 11], required=True)
+    parser.add_argument("--stage", type=int, choices=[9, 10, 11, 13], required=True)
     parser.add_argument("--data", type=Path, default=Path("okm_augumented_2021.csv"))
     parser.add_argument("--output-root", type=Path, default=Path("outputs"))
     args = parser.parse_args()

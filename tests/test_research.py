@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from forecast import read_data
-from research import richer_features, selection_scores
+from research import richer_features, selection_scores, training_window
 
 
 class ResearchTimingTest(unittest.TestCase):
@@ -25,3 +25,10 @@ class ResearchTimingTest(unittest.TestCase):
                             "b": [2., 2., 2., 0.]}, index=index)
         score = selection_scores(oof, ["a", "b"])
         self.assertEqual(min(score, key=score.get), "a")
+
+    def test_training_window_excludes_boundary_and_future_rows(self):
+        frame = pd.DataFrame({"target": range(97)}, index=pd.date_range("2021-01-01", periods=97, freq="h"))
+        selected = training_window(frame, "2021-01-04", window_days=2)
+        self.assertEqual(selected.index.min(), pd.Timestamp("2021-01-02"))
+        self.assertEqual(selected.index.max(), pd.Timestamp("2021-01-03 23:00"))
+        self.assertEqual(len(selected), 48)

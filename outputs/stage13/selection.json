@@ -1,0 +1,23 @@
+{
+  "stage": 13,
+  "selection_months": [
+    "2021-04",
+    "2021-05",
+    "2021-06"
+  ],
+  "selection_metric": "equal-weighted monthly MAE",
+  "candidate_scores": {
+    "expanding": 4.342834965734104,
+    "recent_28d": 6.373292508794637,
+    "recent_56d": 5.628004814234036,
+    "recent_84d": 4.9072600495320575
+  },
+  "chosen": "expanding",
+  "config": {
+    "features": "combined",
+    "model": "extra_2",
+    "gate": true,
+    "window_days": null
+  },
+  "input_sha256": "404b9150f8ee4fb47e807fbc1aacdf9fddff5c3297d7802449e247981fcc7d75"
+}

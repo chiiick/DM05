@@ -40,3 +40,5 @@ python3 -m unittest discover -s tests
 [11차 결합 실험](STAGE11.md)은 `python3 research.py --stage 11`로 재현합니다. 검증은 ExtraTrees 단독을 선택했으며, 결합에 따른 점수 향상은 없었습니다.
 
 [12차 피크 분석](STAGE12.md)은 `python3 risk.py`로 재현합니다. 새 경보의 오경보는 줄었지만 미탐이 증가했으며, 기존 정책과 비용별로 비교해야 합니다.
+
+[13차 학습 이력 비교](STAGE13.md)는 `python3 research.py --stage 13`으로 재현합니다. 전체 이력이 최근 28·56·84일보다 좋아 기존 학습 범위를 유지했습니다.
