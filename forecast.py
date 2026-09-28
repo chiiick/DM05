@@ -30,13 +30,25 @@ POWER_COLUMNS = ["15분", "30분", "45분", "60분"]
 REQUIRED = ["날짜", "시간", *POWER_COLUMNS, "평균", "생산량", "기온", "풍속", "습도", "강수량"]
 
 
-def read_data(path: Path) -> tuple[pd.DataFrame, dict]:
+def read_data(path: Path, *, allow_partial_last_day: bool = False,
+              observed_through: pd.Timestamp | None = None) -> tuple[pd.DataFrame, dict]:
     raw = pd.read_csv(path)
     missing_columns = sorted(set(REQUIRED) - set(raw.columns))
     if missing_columns:
         raise ValueError(f"Missing columns: {missing_columns}")
     raw["date"] = pd.to_datetime(raw["날짜"].astype(str), format="%Y%m%d", errors="raise")
-    bad_hour = ~raw["시간"].between(0, 23)
+    raw["시간"] = pd.to_numeric(raw["시간"], errors="raise")
+    if observed_through is not None:
+        observed_through = pd.Timestamp(observed_through)
+        if observed_through.tzinfo is not None or observed_through != observed_through.floor("h"):
+            raise ValueError("observed_through must be a timezone-naive whole-hour timestamp")
+        # Remove future observations before diagnostics and feature preparation.
+        raw = raw.loc[(raw.date < observed_through.normalize()) |
+                      ((raw.date == observed_through.normalize()) &
+                       (raw["시간"] <= observed_through.hour))].copy()
+    if raw.empty:
+        raise ValueError("No observations at or before the requested time")
+    bad_hour = ~raw["시간"].between(0, 23) | raw["시간"].mod(1).ne(0)
     bad_dates = sorted(raw.loc[bad_hour, "date"].dt.strftime("%Y-%m-%d").unique().tolist())
     # On these days the hour column has been overwritten. Row order is not
     # sufficient evidence for reconstructing true hours, so drop whole days.
@@ -45,13 +57,21 @@ def read_data(path: Path) -> tuple[pd.DataFrame, dict]:
     if clean["timestamp"].duplicated().any():
         raise ValueError("Duplicate timestamps remain after removing invalid days")
     counts = clean.groupby("date")["시간"].nunique()
-    if not counts.eq(24).all():
+    complete = counts.eq(24)
+    if allow_partial_last_day and len(counts):
+        last_date = counts.index.max()
+        last_hours = sorted(clean.loc[clean.date == last_date, "시간"].tolist())
+        complete.loc[last_date] = last_hours == list(range(len(last_hours)))
+    if not complete.all():
         raise ValueError("A retained date does not contain exactly 24 distinct hours")
     clean = clean.sort_values("timestamp").set_index("timestamp")
     for name in [*POWER_COLUMNS, "평균", "생산량", "기온", "풍속", "습도", "강수량"]:
         clean[name] = pd.to_numeric(clean[name], errors="raise")
-    if clean[["평균", "생산량"]].isna().any().any():
-        raise ValueError("Missing values in the target or historical production input")
+    observed_columns = [*POWER_COLUMNS, "평균", "생산량"]
+    if clean.empty or not np.isfinite(clean[observed_columns].to_numpy()).all():
+        raise ValueError("Observed power and production must be nonempty and finite")
+    if clean[observed_columns].lt(0).any().any():
+        raise ValueError("Observed power and production must be nonnegative")
     same_hour_mean = clean[POWER_COLUMNS].mean(axis=1)
     diagnostics = {
         "raw_rows": int(len(raw)),
@@ -67,7 +87,7 @@ def read_data(path: Path) -> tuple[pd.DataFrame, dict]:
     return clean, diagnostics
 
 
-def make_features(clean: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
+def make_features(clean: pd.DataFrame, *, require_target: bool = True) -> tuple[pd.DataFrame, list[str]]:
     # asfreq inserts missing hours where the invalid days were removed. Exact
     # timestamp shifts therefore cannot accidentally cross those gaps.
     hourly = clean.asfreq("h")
@@ -99,8 +119,9 @@ def make_features(clean: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
     frame["weekday"] = day
     frame["day_of_year"] = frame.index.dayofyear
     frame["weekday_work_start"] = ((day < 5) & np.isin(hour, [7, 8, 9])).astype(int)
-    frame = frame.dropna().copy()
-    return frame, [name for name in frame if name != "target"]
+    features = [name for name in frame if name != "target"]
+    required = features + (["target"] if require_target else [])
+    return frame.dropna(subset=required).copy(), features
 
 
 def fit_ridge(x: np.ndarray, y: np.ndarray, alpha: float) -> dict:

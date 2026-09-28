@@ -11,6 +11,8 @@ python3 -m pip install -r requirements.txt
 python3 forecast.py --data okm_augumented_2021.csv --output outputs
 python3 audit.py
 python3 advanced_forecast.py
+python3 deploy.py train
+python3 deploy.py predict
 python3 -m unittest discover -s tests
 ```
 
@@ -26,3 +28,7 @@ python3 -m unittest discover -s tests
 단계별 변경과 수치는 [STAGE1.md](STAGE1.md), [STAGE2.md](STAGE2.md), [STAGE3.md](STAGE3.md), [STAGE4.md](STAGE4.md), [STAGE5.md](STAGE5.md), [STAGE6.md](STAGE6.md)에 있습니다. 6차에는 데이터 반복성과 월별 성능 개선의 한계를 다시 검증했습니다. 기존 분석은 [ANALYSIS.md](ANALYSIS.md), 과제 원문 대비 한계와 제출 항목은 [ROADMAP.md](ROADMAP.md)에 남겨두었습니다.
 
 [7차 실험](STAGE7.md)은 6개 후보를 같은 조건에서 비교한 뒤 기존 모델을 유지했습니다. 후보별 검증 예측과 선택 결과는 `outputs/stage7/`에 있습니다. 새 후보를 추가한 만큼 점수가 개선됐다고 해석하지 않습니다.
+
+[8차 추론](STAGE8.md)은 정답이 없는 다음 한 시간을 예측합니다. 저장한 모델은 `artifacts/latest.joblib`, 학습·입력 기록은 `artifacts/latest.json`, 예측은 `outputs/stage8/next_prediction.json`에 생성됩니다. 모델 바이너리는 위 명령으로 재생성합니다. 과거 재현을 위한 모델 학습 종료 시점과 `--last-observed-hour` 사용법은 8차 문서에 있습니다.
+
+현재 평균 전력 평가 MAE는 **5.067**이며, 개발 중 이미 확인한 8~9월에 대한 월별 재학습 결과입니다. 새로운 독립 시험 점수가 아닙니다. 피크 직접 분류는 같은 기간 미탐 7시간, 오경보 126시간으로, 현장 비용에 따른 선택이 필요합니다.

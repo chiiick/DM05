@@ -1,0 +1,22 @@
+{
+  "last_observed_hour": "2021-09-14 23:00:00",
+  "forecast_hour": "2021-09-15 00:00:00",
+  "predicted_mean": 70.18678808808923,
+  "empirical_interval_90": [
+    58.978321606625144,
+    81.39525456955332
+  ],
+  "peak_risk_score": 0.0045474680287498626,
+  "peak_alert": false,
+  "peak_score_cutoff": 0.36189282274441137,
+  "peak_event_cutoff": 182.0,
+  "mean_model_observed_through": "2021-09-14 23:00:00",
+  "peak_model_observed_through": "2021-07-31 23:00:00",
+  "history_file_sha256": "404b9150f8ee4fb47e807fbc1aacdf9fddff5c3297d7802449e247981fcc7d75",
+  "model_sha256": "b0eef34da4454ce3c0e07cb0304232c0e39d73a27747d8cf1d79d706aab9a410",
+  "notes": [
+    "The forecast hour's observations are not used.",
+    "Power units remain unconfirmed; risk score is not a calibrated probability.",
+    "Empirical residual range; time-series coverage is not guaranteed after refitting."
+  ]
+}
