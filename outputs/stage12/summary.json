@@ -1,0 +1,179 @@
+{
+  "chosen": "hgb",
+  "monthly_average_precision": {
+    "legacy_hgb": {
+      "2021-04": 0.18917910242362565,
+      "2021-05": 0.5200127915798313,
+      "2021-06": 0.9597801747608394
+    },
+    "hgb": {
+      "2021-04": 0.32145647963719565,
+      "2021-05": 0.6824714211907064,
+      "2021-06": 0.9731277455573009
+    },
+    "extra_2": {
+      "2021-04": 0.245028693697027,
+      "2021-05": 0.5849156334509812,
+      "2021-06": 0.9644725364160585
+    },
+    "extra_8": {
+      "2021-04": 0.19784307229482667,
+      "2021-05": 0.4806152422945242,
+      "2021-06": 0.826348023107687
+    },
+    "forest": {
+      "2021-04": 0.23410614903826416,
+      "2021-05": 0.4117734190798038,
+      "2021-06": 0.80804550142568
+    }
+  },
+  "mean_month_average_precision": {
+    "legacy_hgb": 0.5563240229214321,
+    "hgb": 0.6590185487950676,
+    "extra_2": 0.5981389545213556,
+    "extra_8": 0.5016021125656792,
+    "forest": 0.484641689847916
+  },
+  "score_cutoff": 0.5354008975670582,
+  "selection_event_recall_floor": 0.85,
+  "selection_counts": {
+    "n": 2184,
+    "actual_peak_hours": 88,
+    "tp": 75,
+    "fp": 44,
+    "fn": 13,
+    "precision": 0.6302521008403361,
+    "recall": 0.8522727272727273,
+    "f2": 0.7961783439490446
+  },
+  "config": {
+    "features": "combined",
+    "model": "hgb"
+  },
+  "event_cutoff": 182.0,
+  "selection_end": "2021-06-30 23:00:00",
+  "input_sha256": "404b9150f8ee4fb47e807fbc1aacdf9fddff5c3297d7802449e247981fcc7d75",
+  "features": [
+    "power_lag_1",
+    "power_lag_2",
+    "power_lag_3",
+    "power_lag_23",
+    "power_lag_24",
+    "power_lag_25",
+    "power_lag_48",
+    "power_lag_167",
+    "power_lag_168",
+    "power_lag_169",
+    "production_lag_1",
+    "production_lag_2",
+    "production_lag_3",
+    "production_lag_24",
+    "production_lag_25",
+    "previous_hour_final_quarter",
+    "power_past_6h_mean",
+    "power_past_24h_mean",
+    "power_past_6h_std",
+    "power_recent_change",
+    "production_recent_change",
+    "previous_hour_active",
+    "past_6h_active_share",
+    "hour_sin",
+    "hour_cos",
+    "weekday_sin",
+    "weekday_cos",
+    "month_sin",
+    "month_cos",
+    "weekend",
+    "hour",
+    "weekday",
+    "day_of_year",
+    "weekday_work_start",
+    "previous_15분",
+    "previous_30분",
+    "previous_45분",
+    "previous_quarter_ramp",
+    "previous_last_quarter_ramp",
+    "previous_quarter_range",
+    "previous_quarter_max",
+    "day_ago_quarter_max",
+    "past_6_active_share",
+    "past_6_production_logmean",
+    "past_12_active_share",
+    "past_12_production_logmean",
+    "past_24_active_share",
+    "past_24_production_logmean",
+    "past_48_active_share",
+    "past_48_production_logmean",
+    "past_24_power_min",
+    "past_24_power_max",
+    "past_48_power_mean",
+    "power_relative_to_day_mean",
+    "preceding_idle_hours"
+  ],
+  "configs": {
+    "legacy_hgb": {
+      "features": "base",
+      "model": "hgb"
+    },
+    "hgb": {
+      "features": "combined",
+      "model": "hgb"
+    },
+    "extra_2": {
+      "features": "combined",
+      "model": "extra_2"
+    },
+    "extra_8": {
+      "features": "combined",
+      "model": "extra_8"
+    },
+    "forest": {
+      "features": "combined",
+      "model": "forest"
+    }
+  },
+  "july_audit": {
+    "n": 572,
+    "actual_peak_hours": 109,
+    "tp": 96,
+    "fp": 15,
+    "fn": 13,
+    "precision": 0.8648648648648649,
+    "recall": 0.8807339449541285,
+    "f2": 0.8775137111517367
+  },
+  "evaluation": {
+    "n": 1080,
+    "actual_peak_hours": 123,
+    "tp": 95,
+    "fp": 98,
+    "fn": 28,
+    "precision": 0.49222797927461137,
+    "recall": 0.7723577235772358,
+    "f2": 0.6934306569343065
+  },
+  "evaluation_average_precision": 0.5997590114244211,
+  "by_month": {
+    "2021-08": {
+      "n": 744,
+      "actual_peak_hours": 86,
+      "tp": 64,
+      "fp": 65,
+      "fn": 22,
+      "precision": 0.49612403100775193,
+      "recall": 0.7441860465116279,
+      "f2": 0.6765327695560254
+    },
+    "2021-09": {
+      "n": 336,
+      "actual_peak_hours": 37,
+      "tp": 31,
+      "fp": 33,
+      "fn": 6,
+      "precision": 0.484375,
+      "recall": 0.8378378378378378,
+      "f2": 0.7311320754716982
+    }
+  },
+  "note": "Scores are not calibrated probabilities. Event cutoff is the inherited retrospective 182 definition."
+}
