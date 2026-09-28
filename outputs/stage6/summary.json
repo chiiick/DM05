@@ -1,0 +1,120 @@
+{
+  "data": {
+    "raw_rows": 6168,
+    "bad_hour_rows": 48,
+    "removed_dates": [
+      "2021-07-13",
+      "2021-07-15"
+    ],
+    "retained_rows": 6120,
+    "missing_values_after_day_removal": {
+      "풍속": 3,
+      "강수량": 1
+    },
+    "start": "2021-01-01 00:00:00",
+    "end": "2021-09-14 23:00:00",
+    "max_difference_between_average_and_quarter_mean": 0.5
+  },
+  "profile_redundancy": {
+    "days": 255,
+    "unique_hourly_mean_profiles": 139,
+    "repeated_quarter_vectors": 3578,
+    "evaluation_days": 45,
+    "evaluation_days_with_profile_seen_before_august": 0,
+    "interpretation": "Repeated profiles may reflect augmentation or recurring operation; provenance is unverified."
+  },
+  "derived_workforce": {
+    "n_comparable": 6103,
+    "max_absolute_difference": 4.944070042256499e-09,
+    "formula": "production / sum of same-hour quarter power",
+    "interpretation": "Do not treat this field as an independent measured staffing count."
+  },
+  "period_mae": {
+    "all": {
+      "n": 1080,
+      "persistence": 13.273148148148149,
+      "ensemble": 6.5875537071253,
+      "idle_gated": 5.152532053786161,
+      "operational": 5.066925671090825
+    },
+    "first_august_week": {
+      "n": 168,
+      "persistence": 0.9404761904761905,
+      "ensemble": 8.975378104742887,
+      "idle_gated": 0.9404761904761905,
+      "operational": 0.9404761904761905
+    },
+    "after_first_august_week": {
+      "n": 912,
+      "persistence": 15.544956140350877,
+      "ensemble": 6.147691318090481,
+      "idle_gated": 5.928437081237998,
+      "operational": 5.827061101730364
+    }
+  },
+  "gate_forward_selection": [
+    {
+      "evaluation_month": "2021-05",
+      "selected_rule": "idle_6h_cap_25",
+      "selection_end": "2021-04-30 23:00:00",
+      "n": 744,
+      "mae": 4.933537184576889,
+      "no_gate_mae": 4.967667534038224
+    },
+    {
+      "evaluation_month": "2021-06",
+      "selected_rule": "idle_6h_cap_25",
+      "selection_end": "2021-05-31 23:00:00",
+      "n": 720,
+      "mae": 4.21041790680558,
+      "no_gate_mae": 4.064052466067267
+    },
+    {
+      "evaluation_month": "2021-07",
+      "selected_rule": "idle_6h_cap_25",
+      "selection_end": "2021-06-30 23:00:00",
+      "n": 572,
+      "mae": 5.963861314711665,
+      "no_gate_mae": 5.8479616900535705
+    }
+  ],
+  "block_bootstrap": [
+    {
+      "baseline": "persistence",
+      "improved": "operational",
+      "n_days": 45,
+      "mean_mae_reduction": 8.206222477057324,
+      "percentile_95_interval": [
+        5.4296839587202905,
+        10.485621421658745
+      ],
+      "method": "2000 circular moving-block resamples, 7 days per block, seed 42",
+      "limitation": "Conditional on this already inspected period; does not remove model-selection bias."
+    },
+    {
+      "baseline": "ensemble",
+      "improved": "operational",
+      "n_days": 45,
+      "mean_mae_reduction": 1.5206280360344744,
+      "percentile_95_interval": [
+        0.005709526573465617,
+        3.671274376663439
+      ],
+      "method": "2000 circular moving-block resamples, 7 days per block, seed 42",
+      "limitation": "Conditional on this already inspected period; does not remove model-selection bias."
+    },
+    {
+      "baseline": "idle_gated",
+      "improved": "operational",
+      "n_days": 45,
+      "mean_mae_reduction": 0.08560638269533588,
+      "percentile_95_interval": [
+        0.0,
+        0.1797585221112144
+      ],
+      "method": "2000 circular moving-block resamples, 7 days per block, seed 42",
+      "limitation": "Conditional on this already inspected period; does not remove model-selection bias."
+    }
+  ],
+  "status": "Retrospective audit, not a new untouched test set."
+}
