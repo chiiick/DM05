@@ -3,7 +3,9 @@
 import unittest
 from pathlib import Path
 
-from forecast import make_features, read_data
+import numpy as np
+
+from forecast import alert_scores, make_features, read_data
 
 
 DATA = Path(__file__).resolve().parents[1] / "okm_augumented_2021.csv"
@@ -26,6 +28,13 @@ class FeatureTimingTest(unittest.TestCase):
         frame, _ = make_features(clean)
         self.assertNotIn("2021-07-14 00:00:00", frame.index)
         self.assertNotIn("2021-07-16 00:00:00", frame.index)
+
+    def test_peak_alert_uses_separate_event_and_alarm_cutoffs(self):
+        actual = np.array([180, 190, 200, 170])
+        predicted = np.array([174, 171, 190, 180])
+        report = alert_scores(actual, predicted, peak_cutoff=182,
+                              alert_threshold=172)
+        self.assertEqual((report["tp"], report["fp"], report["fn"]), (1, 2, 1))
 
 
 if __name__ == "__main__":

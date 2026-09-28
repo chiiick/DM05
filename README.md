@@ -12,13 +12,13 @@ python3 forecast.py --data okm_augumented_2021.csv --output outputs
 python3 -m unittest discover -s tests
 ```
 
-`outputs/summary.json`에는 데이터 진단, 시간순 검증, 시험 성능, 사후 조건 분석이 들어 있습니다. `outputs/test_predictions.csv`와 `outputs/test_first_week.png`는 시험구간 예측과 그림입니다.
+`outputs/summary.json`에는 데이터 진단, 시간순 검증, 시험 성능, 사후 조건 분석이 들어 있습니다. `outputs/test_predictions.csv`에는 다음 시간 평균 및 15분 최대값 예측과 피크 경보가 들어 있습니다. `outputs/test_first_week.png`는 평균 전력 예측 그림입니다.
 
 ## 평가 설계
 
 - 2021년 1~6월 학습, 7월 검증, 8월~9월 14일 시험. 모델과 초매개변수 선택은 4~7월의 확장 학습창 검증 4개 구간에서 합니다.
 - 동일 시간의 `15분`·`30분`·`45분`·`60분`, 생산량, 날씨는 미래 실측치이므로 예측 입력으로 사용하지 않습니다. 달력과 과거 관측만 사용합니다.
 - `시간`이 손상된 2021년 7월 13일과 15일은 시각을 복원할 근거가 없어 제외합니다. 정확한 지연 특징이 그 간격을 건너지 않도록 빈 시간을 유지합니다.
-- 피크는 **1~6월 시간 평균 전력의 95백분위**를 임시 기준으로 삼습니다. 15분 최고전력은 사후 진단에만 사용합니다.
+- 시간 평균 피크는 **1~6월 시간 평균 전력의 95백분위**, 15분 최대값 피크는 **1~6월 시간별 15분 최대값의 95백분위**를 임시 기준으로 삼습니다. 두 목표 모두 미래의 해당 시간 관측값은 학습 정답이나 사후 평가에만 사용합니다.
 
-단계별 변경과 수치는 [STAGE1.md](STAGE1.md), 이후 고도화 결과 문서에서 확인할 수 있습니다. 초기 초안 결과는 [ANALYSIS.md](ANALYSIS.md), 과제 원문 대비 한계와 제출 항목은 [ROADMAP.md](ROADMAP.md)에 남겨두었습니다.
+단계별 변경과 수치는 [STAGE1.md](STAGE1.md), [STAGE2.md](STAGE2.md)에서 확인할 수 있습니다. 기존 분석은 [ANALYSIS.md](ANALYSIS.md), 과제 원문 대비 한계와 제출 항목은 [ROADMAP.md](ROADMAP.md)에 남겨두었습니다.

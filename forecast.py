@@ -191,12 +191,87 @@ def make_hgb(min_samples_leaf: int) -> HistGradientBoostingRegressor:
                                          random_state=42)
 
 
+def stage_two_validation(frame: pd.DataFrame, quarter_target: pd.Series,
+                         feature_names: list[str], quarter_cutoff: float) -> dict:
+    """Cross-validated blend and quarter-peak alarm; test data are not used."""
+    folds = [("2021-04-01", "2021-05-01"), ("2021-05-01", "2021-06-01"),
+             ("2021-06-01", "2021-07-01"), ("2021-07-01", "2021-08-01")]
+    rows = []
+    for start, end in folds:
+        train = frame.loc[frame.index < start]
+        valid = frame.loc[(frame.index >= start) & (frame.index < end)]
+        model_predictions = []
+        quarter_predictions = []
+        for leaf in (20, 50):
+            mean_model = make_hgb(leaf).fit(train[feature_names], train.target)
+            quarter_model = make_hgb(leaf).fit(train[feature_names], quarter_target.loc[train.index])
+            model_predictions.append(np.maximum(0, mean_model.predict(valid[feature_names])))
+            quarter_predictions.append(np.maximum(0, quarter_model.predict(valid[feature_names])))
+        fold = pd.DataFrame({
+            "actual_mean": valid.target,
+            "mean_20": model_predictions[0],
+            "mean_50": model_predictions[1],
+            "predicted_mean": np.mean(model_predictions, axis=0),
+            "actual_quarter_max": quarter_target.loc[valid.index],
+            "predicted_quarter_max": np.mean(quarter_predictions, axis=0),
+        }, index=valid.index)
+        rows.append(fold)
+    oof = pd.concat(rows)
+    fold_mae = {}
+    for month, group in oof.groupby(oof.index.strftime("%Y-%m")):
+        fold_mae[month] = {name: float(np.abs(group[name] - group.actual_mean).mean())
+                           for name in ("mean_20", "mean_50", "predicted_mean")}
+
+    observed = oof.actual_quarter_max.to_numpy() >= quarter_cutoff
+    estimate = oof.predicted_quarter_max.to_numpy()
+    # F2 gives recall more weight than precision. This is a provisional
+    # decision criterion until the actual missed-peak / false-alarm costs exist.
+    candidates = np.unique(estimate)
+    best = (-1.0, 0.0)
+    for threshold in candidates:
+        alarm = estimate >= threshold
+        tp = np.sum(alarm & observed)
+        fp = np.sum(alarm & ~observed)
+        fn = np.sum(~alarm & observed)
+        f2 = 5 * tp / (5 * tp + 4 * fn + fp) if tp + fn + fp else 0.0
+        if (f2, threshold) > best:
+            best = (float(f2), float(threshold))
+    threshold = best[1]
+    alarm = estimate >= threshold
+    tp = int(np.sum(alarm & observed))
+    fp = int(np.sum(alarm & ~observed))
+    fn = int(np.sum(~alarm & observed))
+    return {"fold_mae": fold_mae,
+            "mean_fold_mae": {name: float(np.mean([v[name] for v in fold_mae.values()]))
+                              for name in ("mean_20", "mean_50", "predicted_mean")},
+            "quarter_peak_alert_threshold": threshold,
+            "quarter_peak_validation_f2": best[0],
+            "quarter_peak_validation_counts": {"tp": tp, "fp": fp, "fn": fn},
+            "quarter_peak_validation_n": int(len(oof))}
+
+
+def alert_scores(actual: np.ndarray, estimate: np.ndarray, peak_cutoff: float,
+                 alert_threshold: float) -> dict:
+    observed = actual >= peak_cutoff
+    alert = estimate >= alert_threshold
+    tp = int(np.sum(observed & alert))
+    fp = int(np.sum(~observed & alert))
+    fn = int(np.sum(observed & ~alert))
+    precision = tp / (tp + fp) if tp + fp else 0.0
+    recall = tp / (tp + fn) if tp + fn else 0.0
+    return {"n": int(len(actual)), "actual_peak_hours": int(observed.sum()),
+            "tp": tp, "fp": fp, "fn": fn, "precision": precision, "recall": recall,
+            "f2": 5 * precision * recall / (4 * precision + recall)
+                  if precision + recall else 0.0}
+
+
 def condition_analysis(clean: pd.DataFrame, test: pd.DataFrame,
                        prediction: np.ndarray, mean_peak_cutoff: float,
                        quarter_peak_cutoff: float) -> dict:
     """Post-hoc descriptions; same-hour production and quarter power are never features."""
     detail = pd.DataFrame(index=test.index)
     detail["actual"] = test.target
+    detail["prediction"] = prediction
     detail["absolute_error"] = np.abs(prediction - test.target.to_numpy())
     detail["observed_production"] = clean.loc[test.index, "생산량"]
     detail["previous_production"] = test.production_lag_1
@@ -211,6 +286,7 @@ def condition_analysis(clean: pd.DataFrame, test: pd.DataFrame,
         ["idle", "start", "stop", "running"], default="unknown")
     detail["hour"] = detail.index.hour
     detail["day_type"] = np.where(detail.index.dayofweek >= 5, "weekend", "weekday")
+    detail["month"] = detail.index.strftime("%Y-%m")
 
     def aggregate(column: str) -> dict:
         return {str(key): {"n": int(len(group)),
@@ -224,6 +300,13 @@ def condition_analysis(clean: pd.DataFrame, test: pd.DataFrame,
             "by_production_state": aggregate("production_state"),
             "by_hour": aggregate("hour"),
             "by_day_type": aggregate("day_type"),
+            "by_month": aggregate("month"),
+            "largest_errors": [
+                {"timestamp": str(stamp), "actual": float(row.actual),
+                 "prediction": float(row.prediction),
+                 "absolute_error": float(row.absolute_error),
+                 "production_state": row.production_state}
+                for stamp, row in detail.nlargest(10, "absolute_error").iterrows()],
             "quarter_peak_threshold": quarter_peak_cutoff,
             "quarter_peak_hours": int(detail.quarter_peak.sum()),
             "mean_peak_hours": int(detail.mean_peak.sum()),
@@ -234,7 +317,7 @@ def save_plot(predictions: pd.DataFrame, output: Path) -> None:
     first_week = predictions.iloc[:168]
     fig, ax = plt.subplots(figsize=(12, 4))
     ax.plot(first_week.index, first_week["actual"], label="Actual", linewidth=1)
-    ax.plot(first_week.index, first_week["hgb"], label="HGB 1h ahead", linewidth=1)
+    ax.plot(first_week.index, first_week["ensemble"], label="Ensemble 1h ahead", linewidth=1)
     ax.set(title="First test week: one-hour-ahead electricity demand", ylabel="Hourly mean demand")
     ax.legend()
     fig.autofmt_xdate()
@@ -260,15 +343,32 @@ def run(data_path: Path, output: Path) -> None:
     peak_cutoff = float(np.quantile(train.target.to_numpy(), 0.95))
     quarter_train_max = clean.loc[train.index, POWER_COLUMNS].max(axis=1)
     quarter_peak_cutoff = float(np.quantile(quarter_train_max.to_numpy(), 0.95))
+    quarter_target = clean.loc[frame.index, POWER_COLUMNS].max(axis=1)
+    stage_two = stage_two_validation(development, quarter_target, feature_names,
+                                     quarter_peak_cutoff)
     model = fit_ridge(x_train, y_train, chosen_alpha)
     ridge_prediction = ridge_predict(model, x_test)
-    hgb = make_hgb(chosen_leaf)
-    hgb.fit(x_train, y_train)
+    hgb = make_hgb(chosen_leaf).fit(x_train, y_train)
     hgb_prediction = np.maximum(0, hgb.predict(x_test))
+    ensemble_predictions = []
+    quarter_predictions = []
+    for leaf in (20, 50):
+        mean_model = hgb if leaf == chosen_leaf else make_hgb(leaf).fit(x_train, y_train)
+        quarter_model = make_hgb(leaf).fit(x_train, quarter_target.loc[development.index])
+        ensemble_predictions.append(np.maximum(0, mean_model.predict(x_test)))
+        quarter_predictions.append(np.maximum(0, quarter_model.predict(x_test)))
+    ensemble_prediction = np.mean(ensemble_predictions, axis=0)
+    quarter_prediction = np.mean(quarter_predictions, axis=0)
+    quarter_actual = quarter_target.loc[test.index].to_numpy()
+    alert_threshold = stage_two["quarter_peak_alert_threshold"]
 
     predictions = pd.DataFrame({"actual": y_test, "persistence": test["power_lag_1"].to_numpy(),
                                 "weekly": test["power_lag_168"].to_numpy(),
-                                "ridge": ridge_prediction, "hgb": hgb_prediction},
+                                "ridge": ridge_prediction, "hgb": hgb_prediction,
+                                "ensemble": ensemble_prediction,
+                                "quarter_actual": quarter_actual,
+                                "quarter_prediction": quarter_prediction,
+                                "quarter_peak_alert": quarter_prediction >= alert_threshold},
                                index=test.index)
     output.mkdir(parents=True, exist_ok=True)
     predictions.to_csv(output / "test_predictions.csv", index_label="timestamp")
@@ -288,13 +388,18 @@ def run(data_path: Path, output: Path) -> None:
         "split_rows": {"train": len(train), "validation": len(validation), "test": len(test)},
         "train_peak_95th_percentile": peak_cutoff,
         "model_selection": selection,
+        "stage_two_validation": stage_two,
         "chosen_ridge_alpha": chosen_alpha,
         "chosen_hgb_min_samples_leaf": chosen_leaf,
         "final_fit_rows": len(development),
         "test_metrics": {name: scores(y_test, predictions[name].to_numpy(), peak_cutoff)
-                         for name in ("persistence", "weekly", "ridge", "hgb")},
-        "hgb_error_conditions": error_conditions(test, hgb_prediction, peak_cutoff),
-        "observed_test_conditions": condition_analysis(clean, test, hgb_prediction,
+                         for name in ("persistence", "weekly", "ridge", "hgb", "ensemble")},
+        "quarter_max_test_metrics": scores(quarter_actual, quarter_prediction,
+                                            quarter_peak_cutoff),
+        "quarter_peak_alert_test": alert_scores(quarter_actual, quarter_prediction,
+                                                 quarter_peak_cutoff, alert_threshold),
+        "ensemble_error_conditions": error_conditions(test, ensemble_prediction, peak_cutoff),
+        "observed_test_conditions": condition_analysis(clean, test, ensemble_prediction,
                                                          peak_cutoff, quarter_peak_cutoff),
         "ridge_coefficients_standardized": {name: float(value) for name, value in
                                              zip(feature_names, model["coefficients"])},
@@ -304,7 +409,10 @@ def run(data_path: Path, output: Path) -> None:
                       "chosen_ridge_alpha": chosen_alpha,
                       "chosen_hgb_min_samples_leaf": chosen_leaf,
                       "model_selection_mean_mae": selection["mean_mae"],
-                      "test_metrics": report["test_metrics"]}, ensure_ascii=False, indent=2))
+                      "stage_two_validation": stage_two,
+                      "test_metrics": report["test_metrics"],
+                      "quarter_peak_alert_test": report["quarter_peak_alert_test"]},
+                     ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
