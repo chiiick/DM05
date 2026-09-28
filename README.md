@@ -10,6 +10,7 @@ Python 3.10 환경에서:
 python3 -m pip install -r requirements.txt
 python3 forecast.py --data okm_augumented_2021.csv --output outputs
 python3 audit.py
+python3 advanced_forecast.py
 python3 -m unittest discover -s tests
 ```
 
@@ -23,3 +24,5 @@ python3 -m unittest discover -s tests
 - 시간 평균 피크는 **1~6월 시간 평균 전력의 95백분위**, 15분 최대값 피크는 **1~6월 시간별 15분 최대값의 95백분위**를 임시 기준으로 삼습니다. 두 목표 모두 미래의 해당 시간 관측값은 학습 정답이나 사후 평가에만 사용합니다.
 
 단계별 변경과 수치는 [STAGE1.md](STAGE1.md), [STAGE2.md](STAGE2.md), [STAGE3.md](STAGE3.md), [STAGE4.md](STAGE4.md), [STAGE5.md](STAGE5.md), [STAGE6.md](STAGE6.md)에 있습니다. 6차에는 데이터 반복성과 월별 성능 개선의 한계를 다시 검증했습니다. 기존 분석은 [ANALYSIS.md](ANALYSIS.md), 과제 원문 대비 한계와 제출 항목은 [ROADMAP.md](ROADMAP.md)에 남겨두었습니다.
+
+[7차 실험](STAGE7.md)은 6개 후보를 같은 조건에서 비교한 뒤 기존 모델을 유지했습니다. 후보별 검증 예측과 선택 결과는 `outputs/stage7/`에 있습니다. 새 후보를 추가한 만큼 점수가 개선됐다고 해석하지 않습니다.

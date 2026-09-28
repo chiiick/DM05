@@ -1,0 +1,147 @@
+{
+  "input_sha256": "404b9150f8ee4fb47e807fbc1aacdf9fddff5c3297d7802449e247981fcc7d75",
+  "features": [
+    "power_lag_1",
+    "power_lag_2",
+    "power_lag_3",
+    "power_lag_23",
+    "power_lag_24",
+    "power_lag_25",
+    "power_lag_48",
+    "power_lag_167",
+    "power_lag_168",
+    "power_lag_169",
+    "production_lag_1",
+    "production_lag_2",
+    "production_lag_3",
+    "production_lag_24",
+    "production_lag_25",
+    "previous_hour_final_quarter",
+    "power_past_6h_mean",
+    "power_past_24h_mean",
+    "power_past_6h_std",
+    "power_recent_change",
+    "production_recent_change",
+    "previous_hour_active",
+    "past_6h_active_share",
+    "hour_sin",
+    "hour_cos",
+    "weekday_sin",
+    "weekday_cos",
+    "month_sin",
+    "month_cos",
+    "weekend",
+    "hour",
+    "weekday",
+    "day_of_year",
+    "weekday_work_start"
+  ],
+  "selection_end": "2021-07-31 23:00:00",
+  "candidate_validation": {
+    "squared": {
+      "mean_month_mae": 5.674044551834964,
+      "fold_mae": {
+        "2021-04": 7.816496517180796,
+        "2021-05": 4.967667534038224,
+        "2021-06": 4.064052466067267,
+        "2021-07": 5.8479616900535705
+      }
+    },
+    "squared_idle": {
+      "mean_month_mae": 5.486983869593906,
+      "fold_mae": {
+        "2021-04": 6.840119072281491,
+        "2021-05": 4.933537184576888,
+        "2021-06": 4.21041790680558,
+        "2021-07": 5.963861314711665
+      }
+    },
+    "absolute": {
+      "mean_month_mae": 5.587414798585977,
+      "fold_mae": {
+        "2021-04": 6.580621450069352,
+        "2021-05": 5.330064811941736,
+        "2021-06": 4.198543932158994,
+        "2021-07": 6.240429000173826
+      }
+    },
+    "absolute_idle": {
+      "mean_month_mae": 5.652777936945447,
+      "fold_mae": {
+        "2021-04": 6.5187766817572435,
+        "2021-05": 5.416406523072586,
+        "2021-06": 4.30980985015419,
+        "2021-07": 6.366118692797767
+      }
+    },
+    "residual_absolute": {
+      "mean_month_mae": 6.068647890611671,
+      "fold_mae": {
+        "2021-04": 7.499800516643644,
+        "2021-05": 6.219933498575674,
+        "2021-06": 4.187344158048545,
+        "2021-07": 6.367513389178821
+      }
+    },
+    "residual_absolute_idle": {
+      "mean_month_mae": 6.107413084364248,
+      "fold_mae": {
+        "2021-04": 7.31755418505022,
+        "2021-05": 6.323660026099271,
+        "2021-06": 4.323850890818963,
+        "2021-07": 6.46458723548854
+      }
+    }
+  },
+  "chosen_candidate": "squared_idle",
+  "forward_month_selection": [
+    {
+      "month": "2021-05",
+      "selected_candidate": "absolute_idle",
+      "selection_end": "2021-04-30 23:00:00",
+      "mae": 5.416406523072586,
+      "stage5_style_mae": 4.933537184576889
+    },
+    {
+      "month": "2021-06",
+      "selected_candidate": "squared_idle",
+      "selection_end": "2021-05-31 23:00:00",
+      "mae": 4.21041790680558,
+      "stage5_style_mae": 4.21041790680558
+    },
+    {
+      "month": "2021-07",
+      "selected_candidate": "squared_idle",
+      "selection_end": "2021-06-30 23:00:00",
+      "mae": 5.963861314711665,
+      "stage5_style_mae": 5.963861314711665
+    }
+  ],
+  "evaluation": {
+    "n": 1080,
+    "mae": 5.066925671090825,
+    "rmse": 8.879380193854923,
+    "wape": 0.05772325188053091
+  },
+  "evaluation_by_month": {
+    "2021-08": {
+      "n": 744,
+      "mae": 5.181042488845707,
+      "rmse": 9.264842760264825,
+      "wape": 0.06378672554982055
+    },
+    "2021-09": {
+      "n": 336,
+      "mae": 4.814238431776446,
+      "rmse": 7.959702146574964,
+      "wape": 0.04706246874041738
+    }
+  },
+  "after_first_august_week": {
+    "n": 912,
+    "mae": 5.827061101730362,
+    "rmse": 9.648019524364953,
+    "wape": 0.058286588700609716
+  },
+  "limitation": "Repeated retrospective evaluation; candidate choice uses only April-July."
+}
