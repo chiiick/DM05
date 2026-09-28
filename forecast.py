@@ -1,13 +1,18 @@
 """One-hour-ahead electricity forecast with strictly historical inputs.
 
+Select a ridge and histogram gradient boosting model with expanding-window
+validation, then fit through July and evaluate August-September once.
+
 Run from this directory:
-    python3 forecast.py --data /path/to/okm_augumented_2021.csv
+    python3 forecast.py --data okm_augumented_2021.csv
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import platform
 from pathlib import Path
 
 import numpy as np
@@ -16,6 +21,8 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import sklearn
+from sklearn.ensemble import HistGradientBoostingRegressor
 
 
 POWER_COLUMNS = ["15분", "30분", "45분", "60분"]
@@ -40,7 +47,7 @@ def read_data(path: Path) -> tuple[pd.DataFrame, dict]:
     if not counts.eq(24).all():
         raise ValueError("A retained date does not contain exactly 24 distinct hours")
     clean = clean.sort_values("timestamp").set_index("timestamp")
-    for name in ["평균", "생산량", "기온", "풍속", "습도", "강수량"]:
+    for name in [*POWER_COLUMNS, "평균", "생산량", "기온", "풍속", "습도", "강수량"]:
         clean[name] = pd.to_numeric(clean[name], errors="raise")
     if clean[["평균", "생산량"]].isna().any().any():
         raise ValueError("Missing values in the target or historical production input")
@@ -65,12 +72,19 @@ def make_features(clean: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
     hourly = clean.asfreq("h")
     frame = pd.DataFrame(index=hourly.index)
     frame["target"] = hourly["평균"]
-    for lag in (1, 2, 24, 168):
+    for lag in (1, 2, 3, 23, 24, 25, 48, 167, 168, 169):
         frame[f"power_lag_{lag}"] = hourly["평균"].shift(lag)
-    for lag in (1, 24):
+    for lag in (1, 2, 3, 24, 25):
         frame[f"production_lag_{lag}"] = hourly["생산량"].shift(lag)
+    # The preceding hour's final quarter is available at the forecast origin.
+    frame["previous_hour_final_quarter"] = hourly["60분"].shift(1)
     frame["power_past_6h_mean"] = hourly["평균"].shift(1).rolling(6, min_periods=6).mean()
     frame["power_past_24h_mean"] = hourly["평균"].shift(1).rolling(24, min_periods=24).mean()
+    frame["power_past_6h_std"] = hourly["평균"].shift(1).rolling(6, min_periods=6).std()
+    frame["power_recent_change"] = hourly["평균"].shift(1) - hourly["평균"].shift(2)
+    frame["production_recent_change"] = hourly["생산량"].shift(1) - hourly["생산량"].shift(2)
+    frame["previous_hour_active"] = hourly["생산량"].shift(1).gt(0).astype(int)
+    frame["past_6h_active_share"] = hourly["생산량"].shift(1).gt(0).rolling(6, min_periods=6).mean()
     hour = frame.index.hour
     day = frame.index.dayofweek
     frame["hour_sin"] = np.sin(2 * np.pi * hour / 24)
@@ -80,6 +94,10 @@ def make_features(clean: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
     frame["month_sin"] = np.sin(2 * np.pi * frame.index.month / 12)
     frame["month_cos"] = np.cos(2 * np.pi * frame.index.month / 12)
     frame["weekend"] = (day >= 5).astype(int)
+    frame["hour"] = hour
+    frame["weekday"] = day
+    frame["day_of_year"] = frame.index.dayofyear
+    frame["weekday_work_start"] = ((day < 5) & np.isin(hour, [7, 8, 9])).astype(int)
     frame = frame.dropna().copy()
     return frame, [name for name in frame if name != "target"]
 
@@ -133,11 +151,90 @@ def error_conditions(frame: pd.DataFrame, prediction: np.ndarray, peak_cutoff: f
     }
 
 
+def rolling_validation(frame: pd.DataFrame, feature_names: list[str]) -> tuple[dict, float, int]:
+    """Select hyperparameters using expanding-window, future-month folds."""
+    folds = [("2021-04-01", "2021-05-01"), ("2021-05-01", "2021-06-01"),
+             ("2021-06-01", "2021-07-01"), ("2021-07-01", "2021-08-01")]
+    ridge_alphas = (0.1, 10.0, 100.0, 1000.0)
+    hgb_leaves = (20, 50)
+    errors = {name: [] for name in ("persistence", "weekly", *[f"ridge_{a}" for a in ridge_alphas],
+                                    *[f"hgb_leaf_{leaf}" for leaf in hgb_leaves])}
+    fold_rows = {}
+    for start, end in folds:
+        train = frame.loc[frame.index < start]
+        valid = frame.loc[(frame.index >= start) & (frame.index < end)]
+        if train.empty or valid.empty:
+            raise ValueError(f"Empty rolling validation fold: {start}")
+        x_train, y_train = train[feature_names].to_numpy(), train.target.to_numpy()
+        x_valid, y_valid = valid[feature_names].to_numpy(), valid.target.to_numpy()
+        predictions = {"persistence": valid.power_lag_1.to_numpy(),
+                       "weekly": valid.power_lag_168.to_numpy()}
+        for alpha in ridge_alphas:
+            predictions[f"ridge_{alpha}"] = ridge_predict(fit_ridge(x_train, y_train, alpha), x_valid)
+        for leaf in hgb_leaves:
+            model = make_hgb(leaf)
+            model.fit(x_train, y_train)
+            predictions[f"hgb_leaf_{leaf}"] = np.maximum(0, model.predict(x_valid))
+        for name, pred in predictions.items():
+            errors[name].append(float(np.mean(np.abs(pred - y_valid))))
+        fold_rows[start[:7]] = len(valid)
+    mean_mae = {name: float(np.mean(values)) for name, values in errors.items()}
+    best_alpha = min(ridge_alphas, key=lambda a: mean_mae[f"ridge_{a}"])
+    best_leaf = min(hgb_leaves, key=lambda leaf: mean_mae[f"hgb_leaf_{leaf}"])
+    return {"fold_rows": fold_rows, "fold_mae": errors, "mean_mae": mean_mae}, best_alpha, best_leaf
+
+
+def make_hgb(min_samples_leaf: int) -> HistGradientBoostingRegressor:
+    return HistGradientBoostingRegressor(max_iter=150, max_leaf_nodes=15,
+                                         min_samples_leaf=min_samples_leaf,
+                                         learning_rate=0.05, l2_regularization=10,
+                                         random_state=42)
+
+
+def condition_analysis(clean: pd.DataFrame, test: pd.DataFrame,
+                       prediction: np.ndarray, mean_peak_cutoff: float,
+                       quarter_peak_cutoff: float) -> dict:
+    """Post-hoc descriptions; same-hour production and quarter power are never features."""
+    detail = pd.DataFrame(index=test.index)
+    detail["actual"] = test.target
+    detail["absolute_error"] = np.abs(prediction - test.target.to_numpy())
+    detail["observed_production"] = clean.loc[test.index, "생산량"]
+    detail["previous_production"] = test.production_lag_1
+    detail["quarter_max"] = clean.loc[test.index, POWER_COLUMNS].max(axis=1)
+    detail["mean_peak"] = detail.actual >= mean_peak_cutoff
+    detail["quarter_peak"] = detail.quarter_max >= quarter_peak_cutoff
+    active = detail.observed_production.gt(0)
+    previous_active = detail.previous_production.gt(0)
+    detail["production_state"] = np.select(
+        [~previous_active & ~active, ~previous_active & active,
+         previous_active & ~active, previous_active & active],
+        ["idle", "start", "stop", "running"], default="unknown")
+    detail["hour"] = detail.index.hour
+    detail["day_type"] = np.where(detail.index.dayofweek >= 5, "weekend", "weekday")
+
+    def aggregate(column: str) -> dict:
+        return {str(key): {"n": int(len(group)),
+                           "actual_mean": float(group.actual.mean()),
+                           "mae": float(group.absolute_error.mean()),
+                           "mean_peak_rate": float(group.mean_peak.mean()),
+                           "quarter_peak_rate": float(group.quarter_peak.mean())}
+                for key, group in detail.groupby(column)}
+
+    return {"note": "Same-hour production and 15-minute power are observed outcomes for diagnosis only.",
+            "by_production_state": aggregate("production_state"),
+            "by_hour": aggregate("hour"),
+            "by_day_type": aggregate("day_type"),
+            "quarter_peak_threshold": quarter_peak_cutoff,
+            "quarter_peak_hours": int(detail.quarter_peak.sum()),
+            "mean_peak_hours": int(detail.mean_peak.sum()),
+            "mean_peak_misses_quarter_peak": int((detail.quarter_peak & ~detail.mean_peak).sum())}
+
+
 def save_plot(predictions: pd.DataFrame, output: Path) -> None:
     first_week = predictions.iloc[:168]
     fig, ax = plt.subplots(figsize=(12, 4))
     ax.plot(first_week.index, first_week["actual"], label="Actual", linewidth=1)
-    ax.plot(first_week.index, first_week["ridge"], label="Ridge 1h ahead", linewidth=1)
+    ax.plot(first_week.index, first_week["hgb"], label="HGB 1h ahead", linewidth=1)
     ax.set(title="First test week: one-hour-ahead electricity demand", ylabel="Hourly mean demand")
     ax.legend()
     fig.autofmt_xdate()
@@ -154,49 +251,59 @@ def run(data_path: Path, output: Path) -> None:
     test = frame.loc[frame.index >= "2021-08-01"]
     if min(len(train), len(validation), len(test)) == 0:
         raise ValueError("One of the chronological splits is empty")
-    x_train, y_train = train[feature_names].to_numpy(), train.target.to_numpy()
-    x_val, y_val = validation[feature_names].to_numpy(), validation.target.to_numpy()
+    selection, chosen_alpha, chosen_leaf = rolling_validation(frame.loc[frame.index < "2021-08-01"],
+                                                                feature_names)
+    development = frame.loc[frame.index < "2021-08-01"]
+    x_train, y_train = development[feature_names].to_numpy(), development.target.to_numpy()
     x_test, y_test = test[feature_names].to_numpy(), test.target.to_numpy()
-    peak_cutoff = float(np.quantile(y_train, 0.95))
-
-    trials = []
-    for alpha in (0.1, 10.0, 100.0, 1000.0):
-        candidate = fit_ridge(x_train, y_train, alpha)
-        mae = float(np.mean(np.abs(ridge_predict(candidate, x_val) - y_val)))
-        trials.append((mae, alpha))
-    _, chosen_alpha = min(trials)
+    # Freeze the peak definition at the start of validation for comparability.
+    peak_cutoff = float(np.quantile(train.target.to_numpy(), 0.95))
+    quarter_train_max = clean.loc[train.index, POWER_COLUMNS].max(axis=1)
+    quarter_peak_cutoff = float(np.quantile(quarter_train_max.to_numpy(), 0.95))
     model = fit_ridge(x_train, y_train, chosen_alpha)
-    prediction = ridge_predict(model, x_test)
-    validation_prediction = ridge_predict(model, x_val)
+    ridge_prediction = ridge_predict(model, x_test)
+    hgb = make_hgb(chosen_leaf)
+    hgb.fit(x_train, y_train)
+    hgb_prediction = np.maximum(0, hgb.predict(x_test))
 
     predictions = pd.DataFrame({"actual": y_test, "persistence": test["power_lag_1"].to_numpy(),
-                                "weekly": test["power_lag_168"].to_numpy(), "ridge": prediction},
+                                "weekly": test["power_lag_168"].to_numpy(),
+                                "ridge": ridge_prediction, "hgb": hgb_prediction},
                                index=test.index)
     output.mkdir(parents=True, exist_ok=True)
     predictions.to_csv(output / "test_predictions.csv", index_label="timestamp")
     save_plot(predictions, output)
     report = {
+        "reproducibility": {
+            "input_sha256": hashlib.sha256(data_path.read_bytes()).hexdigest(),
+            "python": platform.python_version(),
+            "numpy": np.__version__, "pandas": pd.__version__,
+            "matplotlib": matplotlib.__version__, "scikit_learn": sklearn.__version__,
+            "feature_names": feature_names,
+            "validation_months": ["2021-04", "2021-05", "2021-06", "2021-07"],
+            "final_test_start": "2021-08-01",
+        },
         "data": diagnostics,
         "task": "At the end of hour t-1, predict the mean electricity demand during hour t.",
         "split_rows": {"train": len(train), "validation": len(validation), "test": len(test)},
         "train_peak_95th_percentile": peak_cutoff,
-        "validation_ridge_mae_by_alpha": {str(a): m for m, a in trials},
+        "model_selection": selection,
         "chosen_ridge_alpha": chosen_alpha,
-        "validation_metrics": {
-            "persistence": scores(y_val, validation["power_lag_1"].to_numpy(), peak_cutoff),
-            "weekly": scores(y_val, validation["power_lag_168"].to_numpy(), peak_cutoff),
-            "ridge": scores(y_val, validation_prediction, peak_cutoff),
-        },
+        "chosen_hgb_min_samples_leaf": chosen_leaf,
+        "final_fit_rows": len(development),
         "test_metrics": {name: scores(y_test, predictions[name].to_numpy(), peak_cutoff)
-                         for name in ("persistence", "weekly", "ridge")},
-        "ridge_error_conditions": error_conditions(test, prediction, peak_cutoff),
+                         for name in ("persistence", "weekly", "ridge", "hgb")},
+        "hgb_error_conditions": error_conditions(test, hgb_prediction, peak_cutoff),
+        "observed_test_conditions": condition_analysis(clean, test, hgb_prediction,
+                                                         peak_cutoff, quarter_peak_cutoff),
         "ridge_coefficients_standardized": {name: float(value) for name, value in
                                              zip(feature_names, model["coefficients"])},
     }
     (output / "summary.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps({"data": diagnostics, "split_rows": report["split_rows"],
                       "chosen_ridge_alpha": chosen_alpha,
-                      "validation_metrics": report["validation_metrics"],
+                      "chosen_hgb_min_samples_leaf": chosen_leaf,
+                      "model_selection_mean_mae": selection["mean_mae"],
                       "test_metrics": report["test_metrics"]}, ensure_ascii=False, indent=2))
 
 
