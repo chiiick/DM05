@@ -1,0 +1,166 @@
+{
+  "stage": 11,
+  "selection_months": [
+    "2021-04",
+    "2021-05",
+    "2021-06"
+  ],
+  "selection_metric": "equal-weighted monthly MAE",
+  "candidate_scores": {
+    "tree_weight_0": 5.105911874659961,
+    "tree_weight_25": 4.770137214500632,
+    "tree_weight_50": 4.527895130025963,
+    "tree_weight_75": 4.384115376754083,
+    "tree_weight_100": 4.342834965734104
+  },
+  "chosen": "tree_weight_100",
+  "config": {
+    "features": "combined",
+    "model": "extra_2",
+    "gate": true
+  },
+  "input_sha256": "404b9150f8ee4fb47e807fbc1aacdf9fddff5c3297d7802449e247981fcc7d75",
+  "features": [
+    "power_lag_1",
+    "power_lag_2",
+    "power_lag_3",
+    "power_lag_23",
+    "power_lag_24",
+    "power_lag_25",
+    "power_lag_48",
+    "power_lag_167",
+    "power_lag_168",
+    "power_lag_169",
+    "production_lag_1",
+    "production_lag_2",
+    "production_lag_3",
+    "production_lag_24",
+    "production_lag_25",
+    "previous_hour_final_quarter",
+    "power_past_6h_mean",
+    "power_past_24h_mean",
+    "power_past_6h_std",
+    "power_recent_change",
+    "production_recent_change",
+    "previous_hour_active",
+    "past_6h_active_share",
+    "hour_sin",
+    "hour_cos",
+    "weekday_sin",
+    "weekday_cos",
+    "month_sin",
+    "month_cos",
+    "weekend",
+    "hour",
+    "weekday",
+    "day_of_year",
+    "weekday_work_start",
+    "previous_15분",
+    "previous_30분",
+    "previous_45분",
+    "previous_quarter_ramp",
+    "previous_last_quarter_ramp",
+    "previous_quarter_range",
+    "previous_quarter_max",
+    "day_ago_quarter_max",
+    "past_6_active_share",
+    "past_6_production_logmean",
+    "past_12_active_share",
+    "past_12_production_logmean",
+    "past_24_active_share",
+    "past_24_production_logmean",
+    "past_48_active_share",
+    "past_48_production_logmean",
+    "past_24_power_min",
+    "past_24_power_max",
+    "past_48_power_mean",
+    "power_relative_to_day_mean",
+    "preceding_idle_hours"
+  ],
+  "configs": {
+    "tree_weight_0": {
+      "features": "combined",
+      "model": "hgb",
+      "gate": true
+    },
+    "tree_weight_25": {
+      "features": "combined",
+      "model": "blend:extra_2:0.25",
+      "gate": true
+    },
+    "tree_weight_50": {
+      "features": "combined",
+      "model": "blend:extra_2:0.5",
+      "gate": true
+    },
+    "tree_weight_75": {
+      "features": "combined",
+      "model": "blend:extra_2:0.75",
+      "gate": true
+    },
+    "tree_weight_100": {
+      "features": "combined",
+      "model": "extra_2",
+      "gate": true
+    }
+  },
+  "july_audit": {
+    "tree_weight_0": {
+      "n": 572,
+      "mae": 5.895725978695579,
+      "rmse": 9.062225433101888,
+      "wape": 0.05993912979780444
+    },
+    "tree_weight_25": {
+      "n": 572,
+      "mae": 5.762592186192066,
+      "rmse": 8.864788173677915,
+      "wape": 0.05858561986566415
+    },
+    "tree_weight_50": {
+      "n": 572,
+      "mae": 5.6852702889135385,
+      "rmse": 8.735928243862425,
+      "wape": 0.057799523759105347
+    },
+    "tree_weight_75": {
+      "n": 572,
+      "mae": 5.640593349940942,
+      "rmse": 8.678700856324,
+      "wape": 0.05734531390374169
+    },
+    "tree_weight_100": {
+      "n": 572,
+      "mae": 5.65103074009324,
+      "rmse": 8.694520583627188,
+      "wape": 0.05745142604079649
+    }
+  },
+  "evaluation": {
+    "n": 1080,
+    "mae": 4.904120048868312,
+    "rmse": 8.525854075746372,
+    "wape": 0.05586854341446147
+  },
+  "by_month": {
+    "2021-08": {
+      "n": 744,
+      "mae": 5.013022700119473,
+      "rmse": 8.728697449945614,
+      "wape": 0.061718139512648935
+    },
+    "2021-09": {
+      "n": 336,
+      "mae": 4.662978463955026,
+      "rmse": 8.058551416654712,
+      "wape": 0.0455837992461345
+    }
+  },
+  "after_august_first_week": {
+    "n": 912,
+    "mae": 5.634264970151071,
+    "rmse": 9.262698889748242,
+    "wape": 0.056358098741735974
+  },
+  "note": "Retrospective study on previously inspected data. July is a separate diagnostic, not pristine external validation."
+}

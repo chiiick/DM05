@@ -1,0 +1,23 @@
+{
+  "stage": 11,
+  "selection_months": [
+    "2021-04",
+    "2021-05",
+    "2021-06"
+  ],
+  "selection_metric": "equal-weighted monthly MAE",
+  "candidate_scores": {
+    "tree_weight_0": 5.105911874659961,
+    "tree_weight_25": 4.770137214500632,
+    "tree_weight_50": 4.527895130025963,
+    "tree_weight_75": 4.384115376754083,
+    "tree_weight_100": 4.342834965734104
+  },
+  "chosen": "tree_weight_100",
+  "config": {
+    "features": "combined",
+    "model": "extra_2",
+    "gate": true
+  },
+  "input_sha256": "404b9150f8ee4fb47e807fbc1aacdf9fddff5c3297d7802449e247981fcc7d75"
+}

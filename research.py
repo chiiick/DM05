@@ -64,6 +64,12 @@ class DemandModel:
 
     def fit(self, frame: pd.DataFrame, target: np.ndarray | None = None):
         y = frame.target.to_numpy() if target is None else np.asarray(target)
+        if self.algorithm.startswith("blend:"):
+            _, tree, fraction = self.algorithm.split(":")
+            self.tree_weight = float(fraction)
+            self.children = [DemandModel("hgb", self.features).fit(frame, y),
+                             DemandModel(tree, self.features).fit(frame, y)]
+            return self
         if self.algorithm == "hgb":
             self.estimators = [HistGradientBoostingRegressor(
                 max_iter=150, max_leaf_nodes=15, min_samples_leaf=leaf,
@@ -83,6 +89,9 @@ class DemandModel:
         return self
 
     def predict(self, frame: pd.DataFrame) -> np.ndarray:
+        if self.algorithm.startswith("blend:"):
+            return ((1 - self.tree_weight) * self.children[0].predict(frame)
+                    + self.tree_weight * self.children[1].predict(frame))
         return np.maximum(0, np.array([e.predict(frame[self.features]) for e in self.estimators])).mean(axis=0)
 
 
@@ -117,6 +126,11 @@ def evaluate_configs(data: Path, output: Path, configs: dict, stage: int) -> dic
         oof_parts.append(result)
         print(f"Stage {stage}: evaluated {start[:7]}", flush=True)
     oof = pd.concat(oof_parts)
+    return finish_experiment(data, output, clean, frames, oof, configs, stage)
+
+
+def finish_experiment(data: Path, output: Path, clean: pd.DataFrame, frames: dict,
+                       oof: pd.DataFrame, configs: dict, stage: int) -> dict:
     scores = selection_scores(oof, list(configs))
     chosen = min(scores, key=scores.get)
     config = configs[chosen]
@@ -152,6 +166,27 @@ def evaluate_configs(data: Path, output: Path, configs: dict, stage: int) -> dic
     return report
 
 
+def evaluate_blends(data: Path, root: Path) -> dict:
+    previous = json.loads((root / "stage10/summary.json").read_text())
+    if previous["input_sha256"] != hashlib.sha256(data.read_bytes()).hexdigest():
+        raise ValueError("Stage 10 used a different input dataset")
+    candidates = [n for n, c in previous["configs"].items() if c["model"] != "hgb"]
+    tree_name = min(candidates, key=lambda name: previous["candidate_scores"][name])
+    config = previous["configs"][tree_name]
+    hgb_name = "hgb_idle" if config["gate"] else "hgb"
+    source = pd.read_csv(root / "stage10/validation_predictions.csv", parse_dates=["timestamp"]).set_index("timestamp")
+    oof = source[["actual"]].copy()
+    configs = {}
+    for weight in (0., .25, .5, .75, 1.):
+        name = f"tree_weight_{int(100 * weight)}"
+        oof[name] = (1 - weight) * source[hgb_name] + weight * source[tree_name]
+        algorithm = "hgb" if weight == 0 else config["model"] if weight == 1 else f"blend:{config['model']}:{weight}"
+        configs[name] = {**config, "model": algorithm}
+    clean, _ = read_data(data)
+    frames = {config["features"]: richer_features(clean, config["features"])}
+    return finish_experiment(data, root / "stage11", clean, frames, oof, configs, 11)
+
+
 def stage_configs(stage: int, root: Path) -> dict:
     if stage == 9:
         return {group: {"features": group, "model": "hgb", "gate": True}
@@ -166,9 +201,12 @@ def stage_configs(stage: int, root: Path) -> dict:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--stage", type=int, choices=[9, 10], required=True)
+    parser.add_argument("--stage", type=int, choices=[9, 10, 11], required=True)
     parser.add_argument("--data", type=Path, default=Path("okm_augumented_2021.csv"))
     parser.add_argument("--output-root", type=Path, default=Path("outputs"))
     args = parser.parse_args()
-    configs = stage_configs(args.stage, args.output_root)
-    evaluate_configs(args.data, args.output_root / f"stage{args.stage}", configs, args.stage)
+    if args.stage == 11:
+        evaluate_blends(args.data, args.output_root)
+    else:
+        configs = stage_configs(args.stage, args.output_root)
+        evaluate_configs(args.data, args.output_root / f"stage{args.stage}", configs, args.stage)
