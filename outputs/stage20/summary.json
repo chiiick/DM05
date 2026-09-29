@@ -1,0 +1,218 @@
+{
+  "input_sha256": "404b9150f8ee4fb47e807fbc1aacdf9fddff5c3297d7802449e247981fcc7d75",
+  "high_quarter_cutoff_from_jan_june": 176.0,
+  "large_error_cutoff_from_apr_june_oof": 10.1188888888889,
+  "overall": {
+    "n": 1080,
+    "mae": 4.904120048868313,
+    "rmse": 8.525854075746372,
+    "p90_absolute_error": 12.362118055555547,
+    "large_error_count": 141,
+    "large_error_rate": 0.13055555555555556,
+    "peak_hours": 123,
+    "peak_rate": 0.11388888888888889,
+    "tp": 116,
+    "fp": 126,
+    "fn": 7
+  },
+  "conditions": {
+    "prior_idle6": {
+      "False": {
+        "n": 667,
+        "mae": 6.8119726595035806,
+        "rmse": 9.897172012190763,
+        "p90_absolute_error": 14.770138888888887,
+        "large_error_count": 129,
+        "large_error_rate": 0.1934032983508246,
+        "peak_hours": 122,
+        "peak_rate": 0.18290854572713644,
+        "tp": 115,
+        "fp": 100,
+        "fn": 7
+      },
+      "True": {
+        "n": 413,
+        "mae": 1.8229149852031206,
+        "rmse": 5.6470171491627825,
+        "p90_absolute_error": 2.0,
+        "large_error_count": 12,
+        "large_error_rate": 0.029055690072639227,
+        "peak_hours": 1,
+        "peak_rate": 0.002421307506053269,
+        "tp": 1,
+        "fp": 26,
+        "fn": 0
+      }
+    },
+    "weekday_work_start": {
+      "False": {
+        "n": 984,
+        "mae": 4.440836720867209,
+        "rmse": 7.784084389324786,
+        "p90_absolute_error": 10.950833333333284,
+        "large_error_count": 113,
+        "large_error_rate": 0.11483739837398374,
+        "peak_hours": 89,
+        "peak_rate": 0.09044715447154472,
+        "tp": 83,
+        "fp": 95,
+        "fn": 6
+      },
+      "True": {
+        "n": 96,
+        "mae": 9.652774160879627,
+        "rmse": 14.02486797135826,
+        "p90_absolute_error": 24.81180555555558,
+        "large_error_count": 28,
+        "large_error_rate": 0.2916666666666667,
+        "peak_hours": 34,
+        "peak_rate": 0.3541666666666667,
+        "tp": 33,
+        "fp": 31,
+        "fn": 1
+      }
+    },
+    "prior_quarter_ramp_positive": {
+      "False": {
+        "n": 573,
+        "mae": 4.1424338278068635,
+        "rmse": 8.188218666861506,
+        "p90_absolute_error": 9.94055555555558,
+        "large_error_count": 56,
+        "large_error_rate": 0.09773123909249563,
+        "peak_hours": 29,
+        "peak_rate": 0.0506108202443281,
+        "tp": 26,
+        "fp": 41,
+        "fn": 3
+      },
+      "True": {
+        "n": 507,
+        "mae": 5.764960689239534,
+        "rmse": 8.892023191047297,
+        "p90_absolute_error": 14.274722222222211,
+        "large_error_count": 85,
+        "large_error_rate": 0.16765285996055226,
+        "peak_hours": 94,
+        "peak_rate": 0.1854043392504931,
+        "tp": 90,
+        "fp": 85,
+        "fn": 4
+      }
+    },
+    "prior_quarter_high": {
+      "False": {
+        "n": 905,
+        "mae": 4.248139963167588,
+        "rmse": 7.974690955920832,
+        "p90_absolute_error": 10.294722222222218,
+        "large_error_count": 92,
+        "large_error_rate": 0.10165745856353592,
+        "peak_hours": 39,
+        "peak_rate": 0.0430939226519337,
+        "tp": 37,
+        "fp": 73,
+        "fn": 2
+      },
+      "True": {
+        "n": 175,
+        "mae": 8.296474206349203,
+        "rmse": 10.941741308580383,
+        "p90_absolute_error": 17.968611111111095,
+        "large_error_count": 49,
+        "large_error_rate": 0.28,
+        "peak_hours": 84,
+        "peak_rate": 0.48,
+        "tp": 79,
+        "fp": 53,
+        "fn": 5
+      }
+    },
+    "workhour_prior_active": {
+      "other_active": {
+        "n": 428,
+        "mae": 5.667473877206645,
+        "rmse": 7.700401711401726,
+        "p90_absolute_error": 11.793125000000016,
+        "large_error_count": 57,
+        "large_error_rate": 0.13317757009345793,
+        "peak_hours": 25,
+        "peak_rate": 0.05841121495327103,
+        "tp": 19,
+        "fp": 33,
+        "fn": 6
+      },
+      "other_inactive": {
+        "n": 337,
+        "mae": 2.2486368694362024,
+        "rmse": 6.497697195506277,
+        "p90_absolute_error": 3.0,
+        "large_error_count": 15,
+        "large_error_rate": 0.04451038575667656,
+        "peak_hours": 0,
+        "peak_rate": 0.0,
+        "tp": 0,
+        "fp": 1,
+        "fn": 0
+      },
+      "workhour_active": {
+        "n": 188,
+        "mae": 9.701117390661933,
+        "rmse": 13.929167491904398,
+        "p90_absolute_error": 22.024444444444477,
+        "large_error_count": 62,
+        "large_error_rate": 0.32978723404255317,
+        "peak_hours": 96,
+        "peak_rate": 0.5106382978723404,
+        "tp": 95,
+        "fp": 65,
+        "fn": 1
+      },
+      "workhour_inactive": {
+        "n": 127,
+        "mae": 2.2769302274715653,
+        "rmse": 4.367372576733334,
+        "p90_absolute_error": 5.0544444444444485,
+        "large_error_count": 7,
+        "large_error_rate": 0.05511811023622047,
+        "peak_hours": 2,
+        "peak_rate": 0.015748031496062992,
+        "tp": 2,
+        "fp": 27,
+        "fn": 0
+      }
+    }
+  },
+  "day_cluster_95pct_difference": {
+    "prior_idle6_mae": {
+      "difference": -4.98905767430046,
+      "ci95": [
+        -6.228204501813886,
+        -3.7406272192328087
+      ],
+      "resampled_days": 45
+    },
+    "weekday_work_start_mae": {
+      "difference": 5.211937440012418,
+      "ci95": [
+        3.089868696926641,
+        7.758211678292897
+      ],
+      "resampled_days": 45
+    },
+    "prior_quarter_high_peak_rate": {
+      "difference": 0.4369060773480663,
+      "ci95": [
+        0.353004302837824,
+        0.5072301375813856
+      ],
+      "resampled_days": 45
+    }
+  },
+  "limitations": [
+    "August-September were repeatedly inspected; descriptive associations, not independent proof.",
+    "Condition flags use observations through t-1; their association is not a causal effect.",
+    "The peak threshold 182 is a prior operational convention, not an official tariff threshold.",
+    "Day-cluster intervals condition on these 45 observed days and omit model/threshold selection uncertainty."
+  ]
+}
