@@ -1,0 +1,19 @@
+column,dtype,missing_raw,n_unique_raw,role_at_forecast_origin,interpretation
+날짜,int64,0,257,calendar,Forecast date is known in advance.
+시간,int64,0,60,calendar,Target hour is known in advance; damaged dates are removed.
+15분,int64,0,166,observed_after_hour,Only timestamps earlier than the forecast target can be used.
+30분,int64,0,185,observed_after_hour,Only timestamps earlier than the forecast target can be used.
+45분,int64,0,187,observed_after_hour,Only timestamps earlier than the forecast target can be used.
+60분,int64,0,183,observed_after_hour,Only timestamps earlier than the forecast target can be used.
+평균,int64,0,176,observed_after_hour,Only timestamps earlier than the forecast target can be used.
+생산량,int64,0,1637,observed_after_hour,Only timestamps earlier than the forecast target can be used.
+기온,float64,0,439,excluded_unavailable_future,No forecast issued at the same future timestamp was supplied.
+풍속,float64,3,70,excluded_unavailable_future,No forecast issued at the same future timestamp was supplied.
+습도,int64,0,90,excluded_unavailable_future,No forecast issued at the same future timestamp was supplied.
+강수량,float64,1,244,excluded_unavailable_future,No forecast issued at the same future timestamp was supplied.
+전기요금(계절),float64,0,3,excluded_undocumented,Currency/unit and schedule availability are unconfirmed.
+day,int64,0,7,redundant_calendar,Equivalent to a parsed component of 날짜.
+d,int64,0,31,redundant_calendar,Equivalent to a parsed component of 날짜.
+m,int64,0,9,redundant_calendar,Equivalent to a parsed component of 날짜.
+공장인원,float64,17,3432,excluded_same_hour_derivation,Near-identical to production / same-hour quarter sum; not independent staffing.
+인건비,float64,0,2,excluded_undocumented,Meaning and availability are unconfirmed.

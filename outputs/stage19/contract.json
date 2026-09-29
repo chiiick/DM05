@@ -1,0 +1,108 @@
+{
+  "source_sha256": "404b9150f8ee4fb47e807fbc1aacdf9fddff5c3297d7802449e247981fcc7d75",
+  "source_rows": 6168,
+  "source_columns": 18,
+  "raw_missing_by_column": {
+    "날짜": 0,
+    "시간": 0,
+    "15분": 0,
+    "30분": 0,
+    "45분": 0,
+    "60분": 0,
+    "평균": 0,
+    "생산량": 0,
+    "기온": 0,
+    "풍속": 3,
+    "습도": 0,
+    "강수량": 1,
+    "전기요금(계절)": 0,
+    "day": 0,
+    "d": 0,
+    "m": 0,
+    "공장인원": 17,
+    "인건비": 0
+  },
+  "cleaning": {
+    "raw_rows": 6168,
+    "bad_hour_rows": 48,
+    "removed_dates": [
+      "2021-07-13",
+      "2021-07-15"
+    ],
+    "retained_rows": 6120,
+    "missing_values_after_day_removal": {
+      "풍속": 3,
+      "강수량": 1
+    },
+    "start": "2021-01-01 00:00:00",
+    "end": "2021-09-14 23:00:00",
+    "max_difference_between_average_and_quarter_mean": 0.5
+  },
+  "mean_feature_count": 55,
+  "valid_mean_rows": 5827,
+  "valid_rows_by_period": {
+    "training_before_july": {
+      "valid_model_rows": 4175,
+      "start": "2021-01-08 01:00:00",
+      "end": "2021-06-30 23:00:00"
+    },
+    "july_diagnostic": {
+      "valid_model_rows": 572,
+      "start": "2021-07-01 00:00:00",
+      "end": "2021-07-31 23:00:00"
+    },
+    "august_september_repeatedly_inspected": {
+      "valid_model_rows": 1080,
+      "start": "2021-08-01 00:00:00",
+      "end": "2021-09-14 23:00:00"
+    }
+  },
+  "calendar_redundancy": {
+    "day_matches_iso_weekday": true,
+    "d_matches_day_of_month": true,
+    "m_matches_month": true
+  },
+  "average_vs_quarters": {
+    "n_nonzero_difference": 4302,
+    "max_absolute_difference": 0.5,
+    "target_averages_are_integers": true
+  },
+  "workforce_derivation": {
+    "comparable_rows": 6103,
+    "max_absolute_difference": 4.944070042256499e-09,
+    "formula": "production / sum of same-hour four quarter values"
+  },
+  "daily_profiles": {
+    "retained_days": 255,
+    "unique_hourly_mean_profiles": 139,
+    "evaluation_days": 45,
+    "evaluation_exact_profile_seen_before_august": 0,
+    "nearest_pre_august_profile_mae_median": 4.875,
+    "nearest_pre_august_profile_mae_p10": 0.8083333333333333,
+    "nearest_pre_august_profile_mae_p90": 8.425000000000002
+  },
+  "evaluation_lineage": {
+    "mean_selection_months": [
+      "2021-04",
+      "2021-05",
+      "2021-06"
+    ],
+    "mean_candidate": "expanding",
+    "day_ahead_selection_months": [
+      "2021-04",
+      "2021-05",
+      "2021-06"
+    ],
+    "day_ahead_candidate": "previous_week",
+    "model_comparison_warning": "One-hour updating and midnight-only 24-hour forecasting use different information sets."
+  },
+  "unknown_from_supplied_material": [
+    "official forecast origin",
+    "official target horizon",
+    "physical unit of 평균 and quarter columns",
+    "contract demand interval and threshold",
+    "availability time of production/equipment plans",
+    "real equipment shift constraints"
+  ],
+  "source_note": "This file is a provenance and availability audit, not an independent model test."
+}
