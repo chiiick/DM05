@@ -1,0 +1,19 @@
+{
+  "date": "2021-09-15",
+  "past_profile_disagreement": 10.625,
+  "previous_24h_no_production": false,
+  "above_calibration_disagreement": false,
+  "review_required": false,
+  "reason": "standard_review",
+  "forecast_mean_daily_max": 171.0,
+  "forecast_quarter_max": 183.0,
+  "forecast_peak_alert_hours": 8,
+  "status": "candidate_for_human_review",
+  "can_execute_automatically": false,
+  "missing_operational_inputs": [
+    "equipment-level flexible load",
+    "fixed jobs and due times",
+    "contract peak interval and units",
+    "operator approval"
+  ]
+}

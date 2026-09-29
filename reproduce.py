@@ -13,6 +13,7 @@ COMMANDS = [
     ["research.py", "--stage", "11"], ["risk.py"], ["research.py", "--stage", "13"],
     ["reliability.py"], ["release.py", "train"], ["release.py", "predict"],
     ["final_report.py"], ["transitions.py"], ["horizon.py"], ["operations.py"],
+    ["data_contract.py"], ["condition_analysis.py"], ["decision_guard.py"],
     ["-m", "unittest", "discover", "-s", "tests"],
 ]
 

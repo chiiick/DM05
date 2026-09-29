@@ -1,0 +1,43 @@
+{
+  "input_sha256": "404b9150f8ee4fb47e807fbc1aacdf9fddff5c3297d7802449e247981fcc7d75",
+  "calibration": {
+    "first_origin": "2021-01-08",
+    "last_origin": "2021-06-30",
+    "n_days": 174,
+    "disagreement_p75": 80.73958333333333,
+    "rule": "review if yesterday-vs-last-week past profile MAE > p75, or previous 24h production was zero"
+  },
+  "evaluation": {
+    "all": {
+      "n_days": 45,
+      "hourly_forecast_mae": 31.521296296296295,
+      "planned_move_days": 32,
+      "assumed_flex_violation_days": 24,
+      "arithmetic_rebound_days": 11,
+      "mean_simulated_peak_change_all_days": -0.05513577580247081,
+      "mean_simulated_peak_change_moved_days": -0.07753468472222447
+    },
+    "review_required": {
+      "n_days": 23,
+      "hourly_forecast_mae": 54.3822463768116,
+      "planned_move_days": 12,
+      "assumed_flex_violation_days": 9,
+      "arithmetic_rebound_days": 7,
+      "mean_simulated_peak_change_all_days": 3.637125595169081,
+      "mean_simulated_peak_change_moved_days": 6.971157390740738
+    },
+    "standard_review": {
+      "n_days": 22,
+      "hourly_forecast_mae": 7.621212121212124,
+      "planned_move_days": 20,
+      "assumed_flex_violation_days": 15,
+      "arithmetic_rebound_days": 4,
+      "mean_simulated_peak_change_all_days": -3.915227209090911,
+      "mean_simulated_peak_change_moved_days": -4.306749930000002
+    },
+    "held_fraction": 0.5111111111111111,
+    "high_disagreement_days": 18,
+    "previous_day_no_production_days": 14
+  },
+  "note": "Standard review still requires a human decision. No real schedule was changed. Retrospective August-September outcomes were already inspected; do not claim independent validation or savings."
+}
