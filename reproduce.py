@@ -14,6 +14,7 @@ COMMANDS = [
     ["reliability.py"], ["release.py", "train"], ["release.py", "predict"],
     ["final_report.py"], ["transitions.py"], ["horizon.py"], ["operations.py"],
     ["data_contract.py"], ["condition_analysis.py"], ["decision_guard.py"],
+    ["specified_interval.py"],
     ["-m", "unittest", "discover", "-s", "tests"],
 ]
 

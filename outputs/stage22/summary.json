@@ -1,0 +1,319 @@
+{
+  "selection": {
+    "source_sha256": "404b9150f8ee4fb47e807fbc1aacdf9fddff5c3297d7802449e247981fcc7d75",
+    "selection_end": "2021-06-30 23:00:00",
+    "candidate_monthly_equal_mae": {
+      "persistence": 43.23812762637498,
+      "previous_day": 39.71401093807935,
+      "previous_week": 17.651554067276397,
+      "residual_hgb": 17.194044272526988
+    },
+    "chosen": "residual_hgb",
+    "peak_method": "residual_hgb",
+    "peak_score_threshold": 164.3254308021533,
+    "peak_event_threshold": 182,
+    "issue_hours": [
+      0,
+      6,
+      12,
+      18
+    ],
+    "max_lead_hours": 24,
+    "note": "Only Apr-Jun requests choose the method and peak threshold; July and Aug-Sep do not."
+  },
+  "july_diagnostic": {
+    "request_hours": 2016,
+    "requests": 84,
+    "mae": 7.197901490827947,
+    "rmse": 12.098003207528123
+  },
+  "july_candidate_comparison": {
+    "persistence": {
+      "request_hours": 2016,
+      "requests": 84,
+      "mae": 43.55902777777778,
+      "rmse": 62.13835449387398
+    },
+    "previous_day": {
+      "request_hours": 2016,
+      "requests": 84,
+      "mae": 39.60218253968254,
+      "rmse": 64.76221769882376
+    },
+    "previous_week": {
+      "request_hours": 2016,
+      "requests": 84,
+      "mae": 6.694444444444445,
+      "rmse": 11.37832456213435
+    },
+    "residual_hgb": {
+      "request_hours": 2016,
+      "requests": 84,
+      "mae": 7.197901490827947,
+      "rmse": 12.098003207528123
+    }
+  },
+  "august_september_repeatedly_inspected": {
+    "request_hours": 4224,
+    "requests": 176,
+    "mae": 26.424907246802142,
+    "rmse": 50.43579924086582
+  },
+  "by_month": {
+    "2021-08": {
+      "request_hours": 2976,
+      "requests": 124,
+      "mae": 34.70290152790957,
+      "rmse": 59.71487014139662
+    },
+    "2021-09": {
+      "request_hours": 1248,
+      "requests": 52,
+      "mae": 6.685074730315203,
+      "rmse": 10.318154227964701
+    }
+  },
+  "by_issued_hour": {
+    "0": {
+      "request_hours": 1056,
+      "requests": 44,
+      "mae": 26.081335045260023,
+      "rmse": 49.94958111895836
+    },
+    "6": {
+      "request_hours": 1056,
+      "requests": 44,
+      "mae": 27.447815479611666,
+      "rmse": 51.1418022984151
+    },
+    "12": {
+      "request_hours": 1056,
+      "requests": 44,
+      "mae": 26.011142116544953,
+      "rmse": 50.08409717823505
+    },
+    "18": {
+      "request_hours": 1056,
+      "requests": 44,
+      "mae": 26.15933634579192,
+      "rmse": 50.55905451856488
+    }
+  },
+  "by_lead_bucket": {
+    "1_to_6": {
+      "request_hours": 1056,
+      "requests": 176,
+      "mae": 24.624040847489628,
+      "rmse": 47.89947028878965
+    },
+    "7_to_12": {
+      "request_hours": 1056,
+      "requests": 176,
+      "mae": 26.27113533905442,
+      "rmse": 50.488048038268694
+    },
+    "13_to_24": {
+      "request_hours": 2112,
+      "requests": 176,
+      "mae": 27.402226400332253,
+      "rmse": 51.6317592746873
+    }
+  },
+  "candidate_comparison": {
+    "persistence": {
+      "request_hours": 4224,
+      "requests": 176,
+      "mae": 36.39180871212121,
+      "rmse": 55.083960106231004
+    },
+    "previous_day": {
+      "request_hours": 4224,
+      "requests": 176,
+      "mae": 31.70691287878788,
+      "rmse": 57.07933656656135
+    },
+    "previous_week": {
+      "request_hours": 4224,
+      "requests": 176,
+      "mae": 32.13589015151515,
+      "rmse": 59.46247145354485
+    },
+    "residual_hgb": {
+      "request_hours": 4224,
+      "requests": 176,
+      "mae": 26.424907246802142,
+      "rmse": 50.43579924086582
+    }
+  },
+  "mae_reduction_vs_previous_week": {
+    "baseline": "previous_week",
+    "improved": "residual_hgb",
+    "n_days": 44,
+    "mean_mae_reduction": 5.710982904713013,
+    "percentile_95_interval": [
+      0.8891936700996896,
+      12.635798852451494
+    ],
+    "method": "2000 circular moving-block resamples, 7 days per block, seed 42",
+    "limitation": "Conditional on this already inspected period; does not remove model-selection bias."
+  },
+  "peak_alert": {
+    "tp": 302,
+    "fp": 667,
+    "fn": 188,
+    "peak_hours_in_requests": 490
+  },
+  "peak_alert_00_issue_nonoverlapping": {
+    "tp": 75,
+    "fp": 164,
+    "fn": 47,
+    "peak_hours_in_requests": 122
+  },
+  "conditions": {
+    "weekday_7_to_9": {
+      "False": {
+        "request_hours": 3846,
+        "requests": 176,
+        "mae": 24.61493583473676,
+        "rmse": 47.383619302521055,
+        "tp": 208,
+        "fp": 537,
+        "fn": 148,
+        "peak_hours_in_requests": 356
+      },
+      "True": {
+        "request_hours": 378,
+        "requests": 126,
+        "mae": 44.84064812194354,
+        "rmse": 74.70960091034192,
+        "tp": 94,
+        "fp": 130,
+        "fn": 40,
+        "peak_hours_in_requests": 134
+      }
+    },
+    "no_production_before_origin": {
+      "False": {
+        "request_hours": 2928,
+        "requests": 122,
+        "mae": 16.78231467796229,
+        "rmse": 33.742973116929846,
+        "tp": 262,
+        "fp": 357,
+        "fn": 134,
+        "peak_hours_in_requests": 396
+      },
+      "True": {
+        "request_hours": 1296,
+        "requests": 54,
+        "mae": 48.2100237912181,
+        "rmse": 75.62036371946975,
+        "tp": 40,
+        "fp": 310,
+        "fn": 54,
+        "peak_hours_in_requests": 94
+      }
+    }
+  },
+  "posthoc_production_state": {
+    "idle": {
+      "request_hours": 1700,
+      "requests": 102,
+      "mae": 33.40054262353016,
+      "rmse": 61.65609060883364,
+      "tp": 0,
+      "fp": 224,
+      "fn": 0,
+      "peak_hours_in_requests": 0
+    },
+    "running": {
+      "request_hours": 2296,
+      "requests": 126,
+      "mae": 21.541681996848222,
+      "rmse": 41.68738760710254,
+      "tp": 298,
+      "fp": 423,
+      "fn": 184,
+      "peak_hours_in_requests": 482
+    },
+    "shutdown": {
+      "request_hours": 112,
+      "requests": 77,
+      "mae": 21.251343217681956,
+      "rmse": 32.14481056293903,
+      "tp": 0,
+      "fp": 4,
+      "fn": 0,
+      "peak_hours_in_requests": 0
+    },
+    "startup": {
+      "request_hours": 116,
+      "requests": 78,
+      "mae": 25.845115908164406,
+      "rmse": 39.01522754101416,
+      "tp": 4,
+      "fp": 16,
+      "fn": 4,
+      "peak_hours_in_requests": 8
+    }
+  },
+  "july_feature_sensitivity": {
+    "base_july_mae": 7.197901490827947,
+    "groups": {
+      "past_profile": {
+        "features": [
+          "persistence",
+          "previous_day",
+          "previous_week",
+          "quarter_previous_day",
+          "quarter_previous_week"
+        ],
+        "mae_change_repeats": [
+          55.84575679009078,
+          55.57541421012436,
+          55.45701660619243
+        ],
+        "mean_mae_change": 55.626062535469195
+      },
+      "origin_operation": {
+        "features": [
+          "origin_production",
+          "past24_production_sum",
+          "past24_power_mean"
+        ],
+        "mae_change_repeats": [
+          0.324606008041882,
+          0.36663433454618577,
+          0.4138814501531316
+        ],
+        "mean_mae_change": 0.3683739309137331
+      },
+      "target_calendar_and_lead": {
+        "features": [
+          "lead_hours",
+          "target_hour_sin",
+          "target_hour_cos",
+          "target_weekday_sin",
+          "target_weekday_cos",
+          "target_month_sin",
+          "target_month_cos"
+        ],
+        "mae_change_repeats": [
+          2.677562518308271,
+          2.7083980624901525,
+          2.74250983459938
+        ],
+        "mean_mae_change": 2.7094901384659345
+      }
+    },
+    "limitation": "Joint row permutation breaks temporal and cross-group dependence; predictive sensitivity only."
+  },
+  "limitations": [
+    "Specified future intervals within 24 hours are a provisional interpretation; official horizon is unknown.",
+    "Four issuance hours test availability at different times; API also accepts other whole-hour origins.",
+    "Overlapping requests repeat target hours, so request-hour rows are not independent observations.",
+    "August-September were repeatedly inspected and are retrospective, not a new test.",
+    "A pooled residual HGB AI candidate is selected only if it beats baselines on Apr-Jun; no claimed gain otherwise.",
+    "AI quarter-peak score is max(previous-week quarter profile, AI hourly mean); this enforces a physical lower bound but is not a separately learned peak model."
+  ]
+}

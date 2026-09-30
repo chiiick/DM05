@@ -1,0 +1,22 @@
+{
+  "source_sha256": "404b9150f8ee4fb47e807fbc1aacdf9fddff5c3297d7802449e247981fcc7d75",
+  "selection_end": "2021-06-30 23:00:00",
+  "candidate_monthly_equal_mae": {
+    "persistence": 43.23812762637498,
+    "previous_day": 39.71401093807935,
+    "previous_week": 17.651554067276397,
+    "residual_hgb": 17.194044272526988
+  },
+  "chosen": "residual_hgb",
+  "peak_method": "residual_hgb",
+  "peak_score_threshold": 164.3254308021533,
+  "peak_event_threshold": 182,
+  "issue_hours": [
+    0,
+    6,
+    12,
+    18
+  ],
+  "max_lead_hours": 24,
+  "note": "Only Apr-Jun requests choose the method and peak threshold; July and Aug-Sep do not."
+}
