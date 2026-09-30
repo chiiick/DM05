@@ -1,0 +1,13 @@
+{
+  "common_request_hours": 4224,
+  "actual_max_abs_difference": 0.0,
+  "reproduction_mean_abs_difference": 0.0010785198967832562,
+  "reproduction_max_abs_difference": 0.4278893609826184,
+  "mae": {
+    "state_projection": 7.640892144914342,
+    "residual_hgb": 26.42490724680214,
+    "previous_week": 32.13589015151515,
+    "projected_power_state": 7.6415324107497105,
+    "huber_five_e11_rec30": 7.7102638775640715
+  }
+}

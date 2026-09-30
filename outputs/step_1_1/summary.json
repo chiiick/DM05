@@ -1,0 +1,163 @@
+{
+  "approach": "origin-observed load state times causal weekly template",
+  "selection_apr_jun_monthly_equal_mae": {
+    "state_projection_mae": 22.436397751215555,
+    "previous_week_mae": 17.651554067276397,
+    "state_when_low_else_week_mae": 21.058707125813658
+  },
+  "by_month": {
+    "2021-04": {
+      "requests": 120,
+      "request_hours": 2880,
+      "state_projection_mae": 36.747600657276436,
+      "previous_week_mae": 22.08159722222222,
+      "state_when_low_else_week_mae": 27.027409173662786,
+      "low_state_share": 0.13333333333333333,
+      "by_observed_low_state": {
+        "false": {
+          "request_hours": 2496,
+          "state_projection_mae": 31.47081389134909,
+          "previous_week_mae": 20.255208333333332
+        },
+        "true": {
+          "request_hours": 384,
+          "state_projection_mae": 71.04671463580421,
+          "previous_week_mae": 33.953125
+        }
+      }
+    },
+    "2021-05": {
+      "requests": 124,
+      "request_hours": 2976,
+      "state_projection_mae": 23.948591058334088,
+      "previous_week_mae": 24.28326612903226,
+      "state_when_low_else_week_mae": 29.558913353203476,
+      "low_state_share": 0.12903225806451613,
+      "by_observed_low_state": {
+        "false": {
+          "request_hours": 2592,
+          "state_projection_mae": 17.270710204656137,
+          "previous_week_mae": 23.71219135802469
+        },
+        "true": {
+          "request_hours": 384,
+          "state_projection_mae": 69.02428682066024,
+          "previous_week_mae": 28.138020833333332
+        }
+      }
+    },
+    "2021-06": {
+      "requests": 116,
+      "request_hours": 2784,
+      "state_projection_mae": 6.613001538036137,
+      "previous_week_mae": 6.589798850574713,
+      "state_when_low_else_week_mae": 6.589798850574713,
+      "low_state_share": 0.0,
+      "by_observed_low_state": {
+        "false": {
+          "request_hours": 2784,
+          "state_projection_mae": 6.613001538036137,
+          "previous_week_mae": 6.589798850574713
+        }
+      }
+    },
+    "2021-07": {
+      "requests": 84,
+      "request_hours": 2016,
+      "state_projection_mae": 7.729430158550397,
+      "previous_week_mae": 6.694444444444445,
+      "state_when_low_else_week_mae": 6.694444444444445,
+      "low_state_share": 0.0,
+      "by_observed_low_state": {
+        "false": {
+          "request_hours": 2016,
+          "state_projection_mae": 7.729430158550397,
+          "previous_week_mae": 6.694444444444445
+        }
+      }
+    },
+    "2021-08": {
+      "requests": 124,
+      "request_hours": 2976,
+      "state_projection_mae": 7.804471162081018,
+      "previous_week_mae": 42.401881720430104,
+      "state_when_low_else_week_mae": 23.819912948042955,
+      "low_state_share": 0.27419354838709675,
+      "by_observed_low_state": {
+        "false": {
+          "request_hours": 2160,
+          "state_projection_mae": 6.934280206008002,
+          "previous_week_mae": 29.0
+        },
+        "true": {
+          "request_hours": 816,
+          "state_projection_mae": 10.107917810509592,
+          "previous_week_mae": 77.87745098039215
+        }
+      }
+    },
+    "2021-09": {
+      "requests": 52,
+      "request_hours": 1248,
+      "state_projection_mae": 7.250819103978421,
+      "previous_week_mae": 7.655448717948718,
+      "state_when_low_else_week_mae": 8.617593613831158,
+      "low_state_share": 0.019230769230769232,
+      "by_observed_low_state": {
+        "false": {
+          "request_hours": 1224,
+          "state_projection_mae": 6.222439061849498,
+          "previous_week_mae": 7.616013071895424
+        },
+        "true": {
+          "request_hours": 24,
+          "state_projection_mae": 59.69820125255351,
+          "previous_week_mae": 9.666666666666666
+        }
+      }
+    }
+  },
+  "fit_levels": {
+    "2021-04": {
+      "threshold": 41.0,
+      "idle": 23.0,
+      "fit_cutoff": "2021-03-31 23:00:00"
+    },
+    "2021-05": {
+      "threshold": 40.0,
+      "idle": 22.0,
+      "fit_cutoff": "2021-04-30 23:00:00"
+    },
+    "2021-06": {
+      "threshold": 37.5,
+      "idle": 22.0,
+      "fit_cutoff": "2021-05-31 23:00:00"
+    },
+    "2021-07": {
+      "threshold": 37.5,
+      "idle": 22.0,
+      "fit_cutoff": "2021-06-30 23:00:00"
+    },
+    "2021-08": {
+      "threshold": 39.5,
+      "idle": 23.0,
+      "fit_cutoff": "2021-07-31 23:00:00"
+    },
+    "2021-09": {
+      "threshold": 42.0,
+      "idle": 22.0,
+      "fit_cutoff": "2021-08-31 23:00:00"
+    }
+  },
+  "same_4224_request_hours": {
+    "state_projection_mae": 7.640892144914342,
+    "state_when_low_else_week_mae": 19.32831859929856,
+    "stage22_ai_mae": 26.42490724680214,
+    "previous_week_mae": 32.13589015151515
+  },
+  "limitations": [
+    "August-September and the alternative ZIP were inspected before this 1-1 implementation; these are retrospective figures, not a held-out test.",
+    "The state rule is a mathematical baseline. Stage 22 supplies the separate AI comparator; an AI candidate on this new baseline is future work.",
+    "Only hourly mean is forecast. Peak score and operational effect are not validated by this step."
+  ]
+}
