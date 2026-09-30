@@ -1,0 +1,275 @@
+{
+  "policy": {
+    "method": "adaptive",
+    "lookback_days": 5,
+    "margin": 1.0,
+    "temperature": 1.0,
+    "selection_mae": 16.26362544172458,
+    "selection_end": "2021-06-30 23:00:00",
+    "peak_score_threshold": 165.74545139885333,
+    "peak_event_threshold": 182,
+    "issue_hours": [
+      0,
+      6,
+      12,
+      18
+    ],
+    "max_lead_hours": 24
+  },
+  "candidate_selection_scores": [
+    {
+      "method": "adaptive",
+      "lookback_days": 5,
+      "margin": 1.0,
+      "temperature": 1.0,
+      "selection_mae": 16.26362544172458
+    },
+    {
+      "method": "adaptive",
+      "lookback_days": 5,
+      "margin": 0.0,
+      "temperature": 1.0,
+      "selection_mae": 16.384350482452263
+    },
+    {
+      "method": "adaptive",
+      "lookback_days": 5,
+      "margin": 1.0,
+      "temperature": 3.0,
+      "selection_mae": 16.615307666369063
+    },
+    {
+      "method": "adaptive",
+      "lookback_days": 5,
+      "margin": 0.0,
+      "temperature": 3.0,
+      "selection_mae": 16.6797412049799
+    },
+    {
+      "method": "adaptive",
+      "lookback_days": 7,
+      "margin": 0.0,
+      "temperature": 3.0,
+      "selection_mae": 17.040423485266334
+    },
+    {
+      "method": "adaptive",
+      "lookback_days": 7,
+      "margin": 1.0,
+      "temperature": 3.0,
+      "selection_mae": 17.11238185097027
+    },
+    {
+      "method": "hgb",
+      "selection_mae": 17.194044272526988
+    },
+    {
+      "method": "adaptive",
+      "lookback_days": 7,
+      "margin": 0.0,
+      "temperature": 1.0,
+      "selection_mae": 17.270805452370258
+    },
+    {
+      "method": "adaptive",
+      "lookback_days": 14,
+      "margin": 1.0,
+      "temperature": 3.0,
+      "selection_mae": 17.357146573480914
+    },
+    {
+      "method": "adaptive",
+      "lookback_days": 7,
+      "margin": 1.0,
+      "temperature": 1.0,
+      "selection_mae": 17.423498307865234
+    },
+    {
+      "method": "adaptive",
+      "lookback_days": 14,
+      "margin": 0.0,
+      "temperature": 3.0,
+      "selection_mae": 17.427456566373138
+    },
+    {
+      "method": "adaptive",
+      "lookback_days": 14,
+      "margin": 1.0,
+      "temperature": 1.0,
+      "selection_mae": 17.80202267050402
+    },
+    {
+      "method": "adaptive",
+      "lookback_days": 14,
+      "margin": 0.0,
+      "temperature": 1.0,
+      "selection_mae": 17.86377655538939
+    },
+    {
+      "method": "adaptive",
+      "lookback_days": 3,
+      "margin": 0.0,
+      "temperature": 3.0,
+      "selection_mae": 18.25121153465272
+    },
+    {
+      "method": "adaptive",
+      "lookback_days": 3,
+      "margin": 1.0,
+      "temperature": 3.0,
+      "selection_mae": 18.277600862345974
+    },
+    {
+      "method": "adaptive",
+      "lookback_days": 3,
+      "margin": 0.0,
+      "temperature": 1.0,
+      "selection_mae": 18.45997829929716
+    },
+    {
+      "method": "equal",
+      "selection_mae": 18.569781176216583
+    },
+    {
+      "method": "adaptive",
+      "lookback_days": 3,
+      "margin": 1.0,
+      "temperature": 1.0,
+      "selection_mae": 18.687874247042338
+    },
+    {
+      "method": "state",
+      "selection_mae": 22.436397751215555
+    }
+  ],
+  "selection_apr_jun": {
+    "ensemble": 16.419148054788913,
+    "residual_hgb": 17.357939887265893,
+    "state_projection": 22.629015412552196,
+    "previous_week": 17.848148148148148
+  },
+  "selection_monthly_equal_mae": 16.26362544172458,
+  "july_diagnostic": {
+    "ensemble": 6.901083069524343,
+    "residual_hgb": 7.197901490827947,
+    "state_projection": 7.729430158550397,
+    "previous_week": 6.694444444444445
+  },
+  "august_september_repeatedly_inspected": {
+    "ensemble": 8.540330614819775,
+    "residual_hgb": 26.424907246802142,
+    "state_projection": 7.640892144914342,
+    "previous_week": 32.13589015151515
+  },
+  "by_month": {
+    "2021-08": {
+      "request_hours": 2976,
+      "ensemble": 9.316551362266729,
+      "residual_hgb": 34.70290152790957,
+      "state_projection": 7.804471162081018,
+      "previous_week": 42.401881720430104,
+      "mean_state_weight": 0.795448997975032
+    },
+    "2021-09": {
+      "request_hours": 1248,
+      "ensemble": 6.689342678600112,
+      "residual_hgb": 6.685074730315203,
+      "state_projection": 7.250819103978421,
+      "previous_week": 7.655448717948718,
+      "mean_state_weight": 0.2747230731639246
+    }
+  },
+  "by_lead_bucket": {
+    "1_to_6": {
+      "ensemble": 7.202823704025231,
+      "residual_hgb": 24.624040847489628,
+      "state_projection": 6.85382358662165,
+      "previous_week": 32.12405303030303
+    },
+    "7_to_12": {
+      "ensemble": 8.348596363957837,
+      "residual_hgb": 26.27113533905442,
+      "state_projection": 7.6117545150408015,
+      "previous_week": 32.12310606060606
+    },
+    "13_to_24": {
+      "ensemble": 9.304951195648014,
+      "residual_hgb": 27.402226400332253,
+      "state_projection": 8.048995238997458,
+      "previous_week": 32.14820075757576
+    }
+  },
+  "by_observed_low_state": {
+    "false": {
+      "ensemble": 7.09255857683759,
+      "residual_hgb": 15.882605479273687,
+      "state_projection": 6.676805749610245,
+      "previous_week": 21.26536643026005
+    },
+    "true": {
+      "ensemble": 14.372783682119426,
+      "residual_hgb": 68.89532293884533,
+      "state_projection": 11.524783051710848,
+      "previous_week": 75.92857142857143
+    }
+  },
+  "interval_24h": {
+    "requests": 176,
+    "mean_of_hourly_means_mae": 6.3421795332930255,
+    "max_of_hourly_means_mae": 10.79048316049393
+  },
+  "selection_gain_vs_hgb_block_bootstrap": {
+    "baseline": "residual_hgb",
+    "improved": "ensemble",
+    "n_days": 90,
+    "mean_mae_reduction": 0.938791832476977,
+    "percentile_95_interval": [
+      -0.8617482703883427,
+      2.880703286848909
+    ],
+    "method": "2000 circular moving-block resamples, 7 days per block, seed 42",
+    "limitation": "Conditional on this already inspected period; does not remove model-selection bias."
+  },
+  "peak_alert": {
+    "tp": 409,
+    "fp": 677,
+    "fn": 81,
+    "peak_hours_in_requests": 490
+  },
+  "peak_alert_00_issue_nonoverlapping": {
+    "tp": 102,
+    "fp": 166,
+    "fn": 20,
+    "peak_hours_in_requests": 122
+  },
+  "mae_reduction_vs_stage22_block_bootstrap": {
+    "baseline": "residual_hgb",
+    "improved": "ensemble",
+    "n_days": 44,
+    "mean_mae_reduction": 17.88457663198237,
+    "percentile_95_interval": [
+      1.006727156366291,
+      37.63154704541355
+    ],
+    "method": "2000 circular moving-block resamples, 7 days per block, seed 42",
+    "limitation": "Conditional on this already inspected period; does not remove model-selection bias."
+  },
+  "mae_reduction_vs_state_block_bootstrap": {
+    "baseline": "state_projection",
+    "improved": "ensemble",
+    "n_days": 44,
+    "mean_mae_reduction": -0.8994384699054317,
+    "percentile_95_interval": [
+      -2.734313774202495,
+      0.44462893504922335
+    ],
+    "method": "2000 circular moving-block resamples, 7 days per block, seed 42",
+    "limitation": "Conditional on this already inspected period; does not remove model-selection bias."
+  },
+  "limitations": [
+    "April-June choose the policy; July is diagnostic and August-September were repeatedly inspected, so there is no untouched test.",
+    "The 19 candidate policies are compared on only three selection months; the winner may overfit them.",
+    "The ensemble uses repeated forecast requests for recent errors; these are correlated, not independent observations.",
+    "Peak score uses the previous-week quarter maximum as a floor; this is not a separate learned peak model or verified savings estimate."
+  ]
+}

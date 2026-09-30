@@ -15,6 +15,7 @@ COMMANDS = [
     ["final_report.py"], ["transitions.py"], ["horizon.py"], ["operations.py"],
     ["data_contract.py"], ["condition_analysis.py"], ["decision_guard.py"],
     ["specified_interval.py"],
+    ["step_1_1.py"], ["step_1_2.py"],
     ["-m", "unittest", "discover", "-s", "tests"],
 ]
 

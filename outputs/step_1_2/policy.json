@@ -1,0 +1,17 @@
+{
+  "method": "adaptive",
+  "lookback_days": 5,
+  "margin": 1.0,
+  "temperature": 1.0,
+  "selection_mae": 16.26362544172458,
+  "selection_end": "2021-06-30 23:00:00",
+  "peak_score_threshold": 165.74545139885333,
+  "peak_event_threshold": 182,
+  "issue_hours": [
+    0,
+    6,
+    12,
+    18
+  ],
+  "max_lead_hours": 24
+}
